@@ -1,0 +1,14 @@
+{
+  "name": "hotel-montecarlo-reservas",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "node local/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "googleapis": "^140.0.1",
+    "serverless-http": "^3.2.0"
+  }
+}

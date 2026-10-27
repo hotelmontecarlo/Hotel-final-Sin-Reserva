@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración de Reservas | Hotel Montecarlo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="/" class="logo">Hotel <span>Montecarlo</span></a>
+      <nav class="nav">
+        <a href="/">Inicio</a>
+        <a href="/reservas">Reservas</a>
+        <a href="/admin" class="active">Administración</a>
+        <button id="btnLogout" class="btn-link" style="display:none">Cerrar sesión</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-sm">
+      <div class="container">
+        <h1>Administración de Reservas</h1>
+        <p>Gestionar estados: Reservado, Transferido, Cancelado y Liberar habitaciones</p>
+      </div>
+    </section>
+
+    <section class="container section" id="loginSection">
+      <div class="card" style="max-width:400px;margin:0 auto">
+        <h2>Acceso Administrador</h2>
+        <div class="form-group">
+          <label>Usuario</label>
+          <input type="text" id="loginUser">
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="loginPass">
+        </div>
+        <button class="btn btn-primary" id="btnLogin">Ingresar</button>
+        <div id="msgLogin" class="msg"></div>
+      </div>
+    </section>
+
+    <section class="container section" id="adminSection" style="display:none">
+      <div class="card">
+        <div class="admin-header">
+          <h2>Listado de Reservas</h2>
+          <div class="filters">
+            <select id="filtroEstado">
+              <option value="TODOS">Todos los estados</option>
+              <option value="RESERVADA">Reservada</option>
+              <option value="CONFIRMADA">Confirmada</option>
+              <option value="TRANSFERIDO">Transferido</option>
+              <option value="CANCELADA">Cancelada</option>
+              <option value="LIBERADA">Liberada</option>
+            </select>
+            <button class="btn btn-outline" id="btnRecargar">Actualizar</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="table" id="tablaReservas">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Habitación</th>
+                <th>Ingreso</th>
+                <th>Salida</th>
+                <th>Cliente</th>
+                <th>Teléfono</th>
+                <th>Personas</th>
+                <th>Estado</th>
+                <th>Transferido</th>
+                <th>Observación</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div id="msgAdmin" class="msg"></div>
+      </div>
+
+      <div class="card mt-2">
+        <h2>Vista Calendario (por habitación)</h2>
+        <p class="muted">Vista tipo calendario de las reservas activas</p>
+        <div id="calendarioVista" class="calendario-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> Hotel Montecarlo. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

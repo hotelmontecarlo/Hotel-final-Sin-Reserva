@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Montecarlo - Caldera, Atacama</title>
+    <meta name="description" content="Hotel Montecarlo - Un lugar tranquilo y silencioso para relajarse en el corazón de Caldera - Bahía Inglesa, Región de Atacama, Chile.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .hero {
+            background: linear-gradient(rgba(30, 58, 138, 0.7), rgba(30, 58, 138, 0.7)), url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 6rem 0 4rem;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+        .btn-hero {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.875rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .btn-hero:hover {
+            background: var(--accent-dark);
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .info-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .info-card i {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+        .info-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-inner">
+            <a href="/" class="logo">Hotel <span>Montecarlo</span></a>
+            <nav class="nav">
+                <a href="/" class="active">Inicio</a>
+                <a href="/reservas">Reservas</a>
+                <a href="/admin">Administración</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Hotel Montecarlo</h1>
+                <p>Un lugar tranquilo y silencioso para relajarse en el corazón de Caldera - Bahía Inglesa</p>
+                <a href="/reservas" class="btn-hero">
+                    <i class="fas fa-calendar-check"></i> Reservar Ahora
+                </a>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div style="text-align: center; max-width: 700px; margin: 0 auto 2rem;">
+                <h2 style="color: var(--primary); font-size: 1.75rem; margin-bottom: 0.75rem;">Bienvenidos</h2>
+                <p style="color: var(--text-light);">Hotel Montecarlo te ofrece una estadía confortable en pleno centro de Caldera, Región de Atacama, Chile. Cerca de Bahía Inglesa, con fácil acceso a atractivos turísticos y servicios.</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="card info-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Ubicación</h3>
+                    <p>Carvallo 627<br>Caldera, Atacama</p>
+                </div>
+                <div class="card info-card">
+                    <i class="fas fa-phone"></i>
+                    <h3>Teléfonos</h3>
+                    <p>+56 52 2315388<br>+56 9 61964694</p>
+                </div>
+                <div class="card info-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Contacto</h3>
+                    <p>reserva@hotel-montecarlo.cl<br>hotel.montecarloatacama@gmail.com</p>
+                </div>
+                <div class="card info-card">
+                    <i class="fas fa-concierge-bell"></i>
+                    <h3>Servicios</h3>
+                    <p>WiFi • TV Cable • Desayuno<br>Recepción 24 horas</p>
+                </div>
+            </div>
+        </section>
+
+        <section style="background: white; padding: 2rem 0;">
+            <div class="container" style="text-align: center;">
+                <h2 style="color: var(--primary); margin-bottom: 1rem;">Sistema de Reservas Online</h2>
+                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Consulta disponibilidad por fechas, selecciona tu habitación y realiza tu reserva</p>
+                <a href="/reservas" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
+                    Ir al Sistema de Reservas
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© <span id="year"></span> Hotel Montecarlo. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

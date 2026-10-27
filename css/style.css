@@ -1,0 +1,474 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --primary: #1e3a8a;
+  --primary-dark: #1e40af;
+  --accent: #f59e0b;
+  --accent-dark: #d97706;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #ea580c;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+}
+
+.logo {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.logo span {
+  color: var(--accent);
+}
+
+.nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav a:hover,
+.nav a.active {
+  color: var(--accent);
+}
+
+.btn-link {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-link:hover {
+  color: var(--accent);
+}
+
+.hero-sm {
+  background: linear-gradient(rgba(30, 58, 138, 0.8), rgba(30, 58, 138, 0.8)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.hero-sm h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-sm p {
+  opacity: 0.9;
+}
+
+.section {
+  padding: 2rem 0 3rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
+}
+
+.card h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.mt-2 {
+  margin-top: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.btn {
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.btn-success:hover {
+  background: #15803d;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.btn-outline:hover {
+  background: var(--bg);
+}
+
+.msg {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.msg.error {
+  color: var(--danger);
+}
+
+.msg.success {
+  color: var(--success);
+}
+
+.habitaciones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.hab-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.hab-item.disponible {
+  cursor: pointer;
+}
+
+.hab-item.disponible:hover {
+  border-color: var(--primary);
+  background: #eff6ff;
+}
+
+.hab-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.hab-nombre {
+  font-weight: 600;
+}
+
+.hab-tipo {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.badge {
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-ok {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-no {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.selected-hab {
+  background: #eff6ff;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 3px solid var(--primary);
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filters {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.filters select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.table thead {
+  background: var(--bg);
+}
+
+.table th {
+  text-align: left;
+  padding: 0.75rem;
+  font-weight: 600;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.table tbody tr:hover {
+  background: var(--bg);
+}
+
+.estado {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.estado.reservada { background: #e0f2fe; color: #075985; }
+.estado.confirmada { background: #dcfce7; color: #166534; }
+.estado.transferido { background: #fef3c7; color: #92400e; }
+.estado.cancelada { background: #fee2e2; color: #991b1b; }
+.estado.liberada { background: #f1f5f9; color: #475569; }
+
+.actions {
+  display: flex;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.btn-sm {
+  padding: 0.375rem 0.625rem;
+  font-size: 0.75rem;
+  border-radius: 6px;
+}
+
+.btn-warn {
+  background: var(--warning);
+  color: white;
+}
+
+.btn-warn:hover {
+  background: #c2410c;
+}
+
+.btn-info {
+  background: #0891b2;
+  color: white;
+}
+
+.btn-info:hover {
+  background: #0e7490;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+.btn-gray {
+  background: #64748b;
+  color: white;
+}
+
+.btn-gray:hover {
+  background: #475569;
+}
+
+.calendario-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.cal-hab {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cal-hab-header {
+  background: var(--bg);
+  padding: 0.625rem 0.875rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+
+.cal-hab-body {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cal-reserva {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  border-left: 3px solid;
+}
+
+.cal-reserva.reservada { background: #e0f2fe; border-color: #0284c7; }
+.cal-reserva.confirmada { background: #dcfce7; border-color: #16a34a; }
+.cal-reserva.transferido { background: #fef3c7; border-color: #f59e0b; }
+.cal-reserva.cancelada { background: #fee2e2; border-color: #dc2626; opacity: 0.7; }
+.cal-reserva.liberada { background: #f1f5f9; border-color: #94a3b8; opacity: 0.7; }
+
+.muted {
+  color: var(--text-light);
+  font-size: 0.875rem;
+}
+
+.footer {
+  background: #0f172a;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  padding: 2rem 0;
+  margin-top: 3rem;
+}
+
+@media (max-width: 640px) {
+  .header-inner {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

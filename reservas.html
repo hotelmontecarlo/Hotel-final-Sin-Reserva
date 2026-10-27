@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservas | Hotel Montecarlo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="/" class="logo">Hotel <span>Montecarlo</span></a>
+      <nav class="nav">
+        <a href="/">Inicio</a>
+        <a href="/reservas" class="active">Reservas</a>
+        <a href="/admin">Administración</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-sm">
+      <div class="container">
+        <h1>Sistema de Reservas</h1>
+        <p>Seleccione habitación y fechas para verificar disponibilidad</p>
+      </div>
+    </section>
+
+    <section class="container section">
+      <div class="grid grid-2">
+        <div class="card">
+          <h2>1. Seleccione fechas</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Fecha de ingreso</label>
+              <input type="date" id="fechaIngreso">
+            </div>
+            <div class="form-group">
+              <label>Fecha de salida</label>
+              <input type="date" id="fechaSalida">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btnBuscar">Buscar disponibilidad</button>
+          <div id="msgBuscar" class="msg"></div>
+        </div>
+
+        <div class="card">
+          <h2>2. Habitaciones disponibles</h2>
+          <div id="habitacionesList" class="habitaciones-list"></div>
+          <div id="msgHab" class="msg"></div>
+        </div>
+      </div>
+
+      <div class="card mt-2" id="cardReserva" style="display:none">
+        <h2>3. Datos de la reserva</h2>
+        <input type="hidden" id="habSeleccionada">
+        <div class="selected-hab">Habitación seleccionada: <strong id="habNombre"></strong></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre completo *</label>
+            <input type="text" id="resNombre" placeholder="Nombre y apellido">
+          </div>
+          <div class="form-group">
+            <label>Teléfono *</label>
+            <input type="tel" id="resTelefono" placeholder="+56 9 ...">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="resEmail" placeholder="correo@ejemplo.cl">
+          </div>
+          <div class="form-group">
+            <label>Nº de personas</label>
+            <input type="number" id="resPersonas" min="1" value="2">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Observaciones</label>
+          <textarea id="resObs" rows="3" placeholder="Comentarios adicionales"></textarea>
+        </div>
+        <button class="btn btn-success" id="btnReservar">Confirmar Reserva</button>
+        <div id="msgReserva" class="msg"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> Hotel Montecarlo. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="/js/reservas.js"></script>
+</body>
+</html>
