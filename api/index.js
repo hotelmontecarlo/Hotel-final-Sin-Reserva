@@ -569,6 +569,68 @@ app.put('/api/admin/reservas/:id/liberar', async (req, res) => {
   }
 });
 
+
+// Setup: crear primer usuario admin (protegido por ACCESS_PIN)
+app.post('/api/setup', async (req, res) => {
+  const { pin, usuario, password, correo } = req.body || {};
+  const setupPin = process.env.ACCESS_PIN || '';
+  if (!setupPin || pin !== setupPin) {
+    return res.status(401).json({ error: 'PIN de setup incorrecto' });
+  }
+  try {
+    await ensureUsuarios();
+    const users = await readUsuarios();
+    if (users.length > 0) {
+      return res.status(400).json({ error: 'Ya existen usuarios. Use el panel admin.' });
+    }
+    const sheets = await getSheets();
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = hashPassword(String(password || 'admin123'), salt);
+    const now = new Date().toISOString();
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: USUARIOS_TAB + '!A1:G1',
+      valueInputOption: 'RAW',
+      insertDataOption: 'INSERT_ROWS',
+      resource: { values: [['1', String(usuario || 'admin').trim(), hash, correo || '', 'admin', salt, now]] }
+    });
+    return res.json({ ok: true, usuario: usuario || 'admin' });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin: crear usuario
+app.post('/api/admin/usuarios', async (req, res) => {
+  if (!requireAdmin(req)) return res.status(401).json({ error: 'No autorizado' });
+  const { usuario, password, correo, rol } = req.body || {};
+  if (!usuario || !password) return res.status(400).json({ error: 'Faltan datos' });
+  try {
+    await ensureUsuarios();
+    const users = await readUsuarios();
+    const q = String(usuario).trim().toLowerCase();
+    if (users.find(u => u.usuario.toLowerCase() === q)) {
+      return res.status(400).json({ error: 'Usuario ya existe' });
+    }
+    const sheets = await getSheets();
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = hashPassword(String(password), salt);
+    const now = new Date().toISOString();
+    let nextId = 1;
+    users.forEach(u => { const n = parseInt(u.id, 10); if (!isNaN(n) && n >= nextId) nextId = n + 1; });
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: USUARIOS_TAB + '!A1:G1',
+      valueInputOption: 'RAW',
+      insertDataOption: 'INSERT_ROWS',
+      resource: { values: [[String(nextId), String(usuario).trim(), hash, correo || '', (rol || 'usuario'), salt, now]] }
+    });
+    return res.json({ ok: true });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 module.exports = app;
