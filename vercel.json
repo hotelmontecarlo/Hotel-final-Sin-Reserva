@@ -2,23 +2,20 @@
   "version": 2,
   "builds": [
     { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "static/**/*", "use": "@vercel/static" },
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "reservas.html", "use": "@vercel/static" },
     { "src": "admin.html", "use": "@vercel/static" },
-    { "src": "assets/**/*", "use": "@vercel/static" },
     { "src": "js/**/*", "use": "@vercel/static" },
-    { "src": "css/**/*", "use": "@vercel/static" },
-    { "src": "sw.js", "use": "@vercel/static" },
-    { "src": "manifest.webmanifest", "use": "@vercel/static" },
-    { "src": "icon.png", "use": "@vercel/static" },
-    { "src": "icon.svg", "use": "@vercel/static" }
+    { "src": "css/**/*", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.js" },
+    { "src": "/static/(.*)", "dest": "/static/$1" },
     { "src": "/reservas", "dest": "/reservas.html" },
     { "src": "/admin", "dest": "/admin.html" },
-    { "src": "/sw\\.js", "dest": "/sw.js" },
-    { "src": "/manifest\\.webmanifest", "dest": "/manifest.webmanifest" },
+    { "src": "/js/(.*)", "dest": "/js/$1" },
+    { "src": "/css/(.*)", "dest": "/css/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
