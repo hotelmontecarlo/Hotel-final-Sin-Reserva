@@ -26,7 +26,7 @@
     <section class="hero-sm">
       <div class="container">
         <h1>Administración de Reservas</h1>
-        <p>Gestionar estados: Reservado, Transferido, Cancelado y Liberar habitaciones</p>
+        <p>Calendario visual por habitación, mes, semana y día</p>
       </div>
     </section>
 
@@ -48,8 +48,28 @@
 
     <section class="container section" id="adminSection" style="display:none">
       <div class="card">
+        <div class="calendar-toolbar">
+          <div class="calendar-nav">
+            <button class="btn btn-outline" id="btnPrev">◀ Anterior</button>
+            <button class="btn btn-outline" id="btnHoy">Hoy</button>
+            <button class="btn btn-outline" id="btnNext">Siguiente ▶</button>
+            <h2 id="calendarTitle" class="calendar-title">Calendario</h2>
+          </div>
+          <div class="calendar-views">
+            <button class="btn-view active" data-view="month">Mes</button>
+            <button class="btn-view" data-view="week">Semana</button>
+            <button class="btn-view" data-view="day">Día</button>
+            <button class="btn btn-outline" id="btnRecargar">Actualizar</button>
+          </div>
+        </div>
+        <div id="roomLegend" class="room-legend"></div>
+        <div id="calendarMain" class="calendar-main"></div>
+        <div id="msgAdmin" class="msg"></div>
+      </div>
+
+      <div class="card mt-2">
         <div class="admin-header">
-          <h2>Listado de Reservas</h2>
+          <h2>Listado completo de reservas</h2>
           <div class="filters">
             <select id="filtroEstado">
               <option value="TODOS">Todos los estados</option>
@@ -59,7 +79,6 @@
               <option value="CANCELADA">Cancelada</option>
               <option value="LIBERADA">Liberada</option>
             </select>
-            <button class="btn btn-outline" id="btnRecargar">Actualizar</button>
           </div>
         </div>
         <div class="table-wrapper">
@@ -82,16 +101,39 @@
             <tbody></tbody>
           </table>
         </div>
-        <div id="msgAdmin" class="msg"></div>
-      </div>
-
-      <div class="card mt-2">
-        <h2>Vista Calendario (por habitación)</h2>
-        <p class="muted">Vista tipo calendario de las reservas activas</p>
-        <div id="calendarioVista" class="calendario-grid"></div>
       </div>
     </section>
   </main>
+
+  <div id="resModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Detalle de Reserva</h3>
+        <button class="modal-close" id="modalClose">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-grid">
+          <div><strong>ID:</strong> <span id="mId"></span></div>
+          <div><strong>Habitación:</strong> <span id="mHab"></span></div>
+          <div><strong>Ingreso:</strong> <span id="mIng"></span></div>
+          <div><strong>Salida:</strong> <span id="mSal"></span></div>
+          <div><strong>Cliente:</strong> <span id="mCli"></span></div>
+          <div><strong>Teléfono:</strong> <span id="mTel"></span></div>
+          <div><strong>Email:</strong> <span id="mEmail"></span></div>
+          <div><strong>Personas:</strong> <span id="mPer"></span></div>
+          <div><strong>Estado:</strong> <span id="mEst"></span></div>
+          <div><strong>Transferido:</strong> <span id="mTrans"></span></div>
+          <div class="modal-full"><strong>Observación:</strong> <span id="mObs"></span></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-outline" id="mBtnConf">Marcar CONFIRMADA</button>
+          <button class="btn btn-warning" id="mBtnTrans">Cambiar Transferido</button>
+          <button class="btn btn-danger" id="mBtnCanc">Cancelar</button>
+          <button class="btn btn-success" id="mBtnLib">Liberar Habitación</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <footer class="footer">
     <div class="container">
