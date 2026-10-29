@@ -238,7 +238,7 @@ async function ensureReservas() {
         spreadsheetId: SHEET_ID,
         range: RESERVAS_TAB + '!A1:N1',
         valueInputOption: 'RAW',
-        resource: { values: [['id_reserva', 'id_habitacion', 'habitacion', 'fecha_ingreso', 'fecha_salida', 'nombre', 'telefono', 'email', 'personas', 'estado', 'transferido', 'observacion', 'creado', 'actualizado']] }
+        resource: { values: [['id_reserva', 'id_habitacion', 'habitacion', 'fecha_ingreso', 'fecha_salida', 'hora_ingreso', 'hora_salida', 'nombre', 'telefono', 'email', 'personas', 'estado', 'transferido', 'observacion', 'creado', 'actualizado']] }
       });
     }
   } catch (err) {
@@ -270,7 +270,7 @@ async function readReservas() {
   if (rows.length < 2) return [];
   const head = rows[0];
   const col = (name) => head.findIndex((h) => String(h).toLowerCase() === name.toLowerCase());
-  const ci = col('id_reserva'), hi = col('id_habitacion'), hn = col('habitacion'), fi = col('fecha_ingreso'), fo = col('fecha_salida'), no = col('nombre'), te = col('telefono'), em = col('email'), pe = col('personas'), es = col('estado'), tr = col('transferido'), ob = col('observacion'), cr = col('creado'), ac = col('actualizado');
+  const ci = col('id_reserva'), hi = col('id_habitacion'), hn = col('habitacion'), fi = col('fecha_ingreso'), fo = col('fecha_salida'), hi2 = col('hora_ingreso'), hs = col('hora_salida'), no = col('nombre'), te = col('telefono'), em = col('email'), pe = col('personas'), es = col('estado'), tr = col('transferido'), ob = col('observacion'), cr = col('creado'), ac = col('actualizado');
   const get = (r, i) => (i >= 0 && r[i] !== undefined && r[i] !== null) ? String(r[i]) : '';
   return rows.slice(1).filter((r) => get(r, fi).trim() !== '').map((r) => ({
     id: get(r, ci),
@@ -278,6 +278,8 @@ async function readReservas() {
     habitacion: get(r, hn),
     fechaIngreso: get(r, fi),
     fechaSalida: get(r, fo),
+    horaIngreso: get(r, hi2),
+    horaSalida: get(r, hs),
     nombre: get(r, no),
     telefono: get(r, te),
     email: get(r, em),
@@ -420,10 +422,10 @@ app.post('/api/reservas', async (req, res) => {
     const now = new Date().toISOString();
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: RESERVAS_TAB + '!A1:N1',
+      range: RESERVAS_TAB + '!A1:P1',
       valueInputOption: 'RAW',
       insertDataOption: 'INSERT_ROWS',
-      resource: { values: [[String(nextId), String(hab.id), hab.nombre, fechaIngreso, fechaSalida, nombre, telefono, email || '', personas || '', 'RESERVADA', 'NO', observacion || '', now, now]] }
+      resource: { values: [[String(nextId), String(hab.id), hab.nombre, fechaIngreso, fechaSalida, horaIngreso || '', horaSalida || '', nombre, telefono, email || '', personas || '', 'RESERVADA', 'NO', observacion || '', now, now]] }
     });
     return res.json({ ok: true, id: nextId });
   } catch (err) {
