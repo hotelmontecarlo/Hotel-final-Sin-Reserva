@@ -155,8 +155,8 @@ function renderTabla() {
     <tr>
       <td>${r.id}</td>
       <td>${r.habitacion || r.idHabitacion}</td>
-      <td>${formatDMY(r.fechaIngreso)}</td>
-      <td>${formatDMY(r.fechaSalida)}</td>
+      <td>${r.fechaIngreso}</td>
+      <td>${r.fechaSalida}</td>
       <td>${r.nombre}</td>
       <td>${r.telefono}</td>
       <td>${r.personas}</td>
@@ -243,7 +243,7 @@ function renderMonth(cont, title) {
       if (d >= ing && d < sal) {
         const hab = r.habitacion || r.idHabitacion;
         const color = roomColorMap[hab] || '#2563eb';
-        bars += `<div class="cal-bar" style="background:${color}" onclick="openModal('${r.id}')" title="${hab} - ${r.nombre} | ${formatDMY(r.fechaIngreso)} → ${formatDMY(r.fechaSalida)}">${hab} · ${r.nombre.split(' ')[0]}</div>`;
+        bars += `<div class="cal-bar" style="background:${color}" onclick="openModal('${r.id}')" title="${hab} - ${r.nombre} | ${r.fechaIngreso} → ${r.fechaSalida}${r.horaIngreso||r.horaSalida?' | '+(r.horaIngreso||'-')+' / '+(r.horaSalida||'-'):''}">${hab} · ${r.nombre.split(' ')[0]}</div>`;
       }
     });
     html += `<div class="month-cell${isToday ? ' today' : ''}" ondblclick="goToDay('${ds}')" title="Doble clic para ver día"><div class="month-day">${day}</div><div class="month-bars">${bars}</div></div>`;
@@ -284,7 +284,7 @@ function renderWeek(cont, title) {
         if (!ing || !sal) return;
         if ((r.habitacion || r.idHabitacion) === hab && d >= ing && d < sal) {
           const color = roomColorMap[hab] || '#2563eb';
-          cellBars += `<div class="cal-bar-sm" style="background:${color}" onclick="openModal('${r.id}')" title="${r.nombre} | ${formatDMY(r.fechaIngreso)} → ${formatDMY(r.fechaSalida)}">${r.nombre.split(' ')[0]}</div>`;
+          cellBars += `<div class="cal-bar-sm" style="background:${color}" onclick="openModal('${r.id}')" title="${r.nombre} | ${r.fechaIngreso} → ${r.fechaSalida}${r.horaIngreso||r.horaSalida?' | '+(r.horaIngreso||'-')+' / '+(r.horaSalida||'-'):''}">${r.nombre.split(' ')[0]}</div>`;
         }
       });
       html += `<div class="week-cell" ondblclick="goToDay('${ds}')">${cellBars}</div>`;
@@ -311,7 +311,7 @@ function renderDay(cont, title) {
         const color = roomColorMap[hab] || '#2563eb';
         info = `<div class="day-res" style="border-left:4px solid ${color}" onclick="openModal('${r.id}')">
           <div><strong>${r.nombre}</strong> · Tel: ${r.telefono}${r.email ? ' · ' + r.email : ''}</div>
-          <div class="muted">Fecha: ${formatDMY(r.fechaIngreso)} a ${formatDMY(r.fechaSalida)}${r.horaIngreso || r.horaSalida ? ' · Hora: ' + (r.horaIngreso||'-') + ' / ' + (r.horaSalida||'-') : ''} · Personas: ${r.personas || '-'} · Estado: ${r.estado} ${r.transferido ? '· TRANSFERIDO' : ''}</div>
+          <div class="muted">Fecha: ${r.fechaIngreso} a ${r.fechaSalida}${r.horaIngreso || r.horaSalida ? ' · Hora: ' + (r.horaIngreso||'-') + ' / ' + (r.horaSalida||'-') : ''} · Personas: ${r.personas || '-'} · Estado: ${r.estado} ${r.transferido ? '· TRANSFERIDO' : ''}</div>
           ${r.observacion ? '<div class="muted">Observación: ' + r.observacion + '</div>' : ''}
         </div>`;
       }
@@ -329,8 +329,8 @@ window.openModal = function(id) {
   selectedReserva = r;
   $('mId').textContent = r.id;
   $('mHab').textContent = r.habitacion || r.idHabitacion;
-  $('mIng').textContent = formatDMY(r.fechaIngreso);
-  $('mSal').textContent = formatDMY(r.fechaSalida);
+  $('mIng').textContent = r.fechaIngreso || '-';
+  $('mSal').textContent = r.fechaSalida || '-';
   const mh = document.getElementById('mHora');
   if (mh) mh.textContent = (r.horaIngreso || '-') + ' / ' + (r.horaSalida || '-');
   $('mCli').textContent = r.nombre;
