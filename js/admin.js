@@ -15,6 +15,7 @@ function authHeaders() {
 }
 
 let reservasCache = [];
+let reservasCacheFull = [];
 let habitacionesUnicas = [];
 const roomColors = [
   '#2563eb', '#dc2626', '#16a34a', '#d97706', '#9333ea', '#0891b2',
@@ -23,8 +24,17 @@ const roomColors = [
 const roomColorMap = {};
 
 let currentDate = new Date();
-let currentView = 'month'; // month | week | day
+let currentView = 'month';
 let selectedReserva = null;
+
+function formatDMY(s) {
+  if (!s) return '-';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const [y,m,d] = s.split('-');
+    return `${d}-${m}-${y}`;
+  }
+  return s;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const yearEl = $('year');
@@ -117,61 +127,6 @@ async function cargarReservas() {
     const res = await fetch('/api/admin/reservas', { headers: authHeaders() });
     const data = await res.json();
     if (!res.ok) { showMsg('msgAdmin', data.error || 'Error', 'error'); if (res.status === 401) doLogout(); return; }
-    reservasCache = (data || []).filter(r => r.estado !== 'CANCELADA' && r.estado !== 'LIBERADA');
-    // build habitaciones
-    const set = new Set();
-    reservasCache.forEach(r => set.add(r.habitacion || r.idHabitacion));
-    habitacionesUnicas = Array.from(set).sort((a,b) => String(a).localeCompare(String(b)));
-    habitacionesUnicas.forEach((h, idx) => {
-      if (!roomColorMap[h]) roomColorMap[h] = roomColors[idx % roomColors.length];
-    });
-    renderTabla();
-    renderCalendar();
-    renderLegend();
-    showMsg('msgAdmin', `${reservasCache.length} reserva(s) activas`, 'success');
-  } catch (e) {
-    showMsg('msgAdmin', 'Error de conexión', 'error');
-  }
-}
-
-function renderTabla() {
-  const tbody = document.querySelector('#tablaReservas tbody');
-  if (!tbody) return;
-  const filtro = $('filtroEstado').value;
-  const filtradas = filtro === 'TODOS' ? (reservasCacheAll()) : (reservasCacheAll()).filter(r => r.estado === filtro);
-  tbody.innerHTML = filtradas.map(r => `
-    <tr>
-      <td>${r.id}</td>
-      <td>${r.habitacion || r.idHabitacion}</td>
-      <td>${r.fechaIngreso}</td>
-      <td>${r.fechaSalida}</td>
-      <td>${r.nombre}</td>
-      <td>${r.telefono}</td>
-      <td>${r.personas}</td>
-      <td><span class="badge badge-${r.estado}">${r.estado}</span></td>
-      <td>${r.transferido ? 'SI' : 'NO'}</td>
-      <td>${r.observacion || ''}</td>
-      <td>
-        <div style="display:flex;gap:.3rem;flex-wrap:wrap">
-          <button class="btn btn-outline" style="font-size:.75rem;padding:.3rem .5rem" onclick="openModal('${r.id}')">Ver/Editar</button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function reservasCacheAll() {
-  // need all including cancelled/liberated - reload from original? easier just use reservasCache which we filtered; better store all
-  return reservasCacheAllFull();
-}
-
-let reservasCacheFull = [];
-async function cargarReservas() {
-  showMsg('msgAdmin', 'Cargando...', 'info');
-  try {
-    const res = await fetch('/api/admin/reservas', { headers: authHeaders() });
-    const data = await res.json();
-    if (!res.ok) { showMsg('msgAdmin', data.error || 'Error', 'error'); if (res.status === 401) doLogout(); return; }
     reservasCacheFull = data || [];
     reservasCache = reservasCacheFull.filter(r => r.estado !== 'CANCELADA' && r.estado !== 'LIBERADA');
     const set = new Set();
@@ -191,6 +146,32 @@ async function cargarReservas() {
 
 function reservasCacheAllFull() { return reservasCacheFull; }
 
+function renderTabla() {
+  const tbody = document.querySelector('#tablaReservas tbody');
+  if (!tbody) return;
+  const filtro = $('filtroEstado').value;
+  const filtradas = filtro === 'TODOS' ? reservasCacheAllFull() : reservasCacheAllFull().filter(r => r.estado === filtro);
+  tbody.innerHTML = filtradas.map(r => `
+    <tr>
+      <td>${r.id}</td>
+      <td>${r.habitacion || r.idHabitacion}</td>
+      <td>${formatDMY(r.fechaIngreso)}</td>
+      <td>${formatDMY(r.fechaSalida)}</td>
+      <td>${r.nombre}</td>
+      <td>${r.telefono}</td>
+      <td>${r.personas}</td>
+      <td><span class="badge badge-${r.estado}">${r.estado}</span></td>
+      <td>${r.transferido ? 'SI' : 'NO'}</td>
+      <td>${r.observacion || ''}</td>
+      <td>
+        <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+          <button class="btn btn-outline" style="font-size:.75rem;padding:.3rem .5rem" onclick="openModal('${r.id}')">Ver/Editar</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
 function renderLegend() {
   const cont = $('roomLegend');
   if (!cont) return;
@@ -205,6 +186,7 @@ function renderLegend() {
 function parseDate(s) {
   if (!s) return null;
   const [y,m,d] = s.split('-').map(Number);
+  if (isNaN(y)) return null;
   return new Date(y, m-1, d);
 }
 function dateToStr(d) {
@@ -242,7 +224,7 @@ function renderMonth(cont, title) {
   title.textContent = currentDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
   const first = new Date(year, month, 1);
   const last = new Date(year, month + 1, 0);
-  const startDay = first.getDay() === 0 ? 7 : first.getDay(); // Monday start
+  const startDay = first.getDay() === 0 ? 7 : first.getDay();
   const daysInMonth = last.getDate();
   let html = '<div class="month-grid">';
   html += '<div class="month-header">Lun</div><div class="month-header">Mar</div><div class="month-header">Mié</div><div class="month-header">Jue</div><div class="month-header">Vie</div><div class="month-header">Sáb</div><div class="month-header">Dom</div>';
@@ -258,17 +240,27 @@ function renderMonth(cont, title) {
       const ing = parseDate(r.fechaIngreso);
       const sal = parseDate(r.fechaSalida);
       if (!ing || !sal) return;
-      if (d >= ing && d < sal) { // mostrar hasta día antes de salida
+      if (d >= ing && d < sal) {
         const hab = r.habitacion || r.idHabitacion;
         const color = roomColorMap[hab] || '#2563eb';
-        bars += `<div class="cal-bar" style="background:${color}" onclick="openModal('${r.id}')" title="${hab} - ${r.nombre} (${r.fechaIngreso}→${r.fechaSalida})">${hab} · ${r.nombre.split(' ')[0]}</div>`;
+        bars += `<div class="cal-bar" style="background:${color}" onclick="openModal('${r.id}')" title="${hab} - ${r.nombre} | ${formatDMY(r.fechaIngreso)} → ${formatDMY(r.fechaSalida)}">${hab} · ${r.nombre.split(' ')[0]}</div>`;
       }
     });
-    html += `<div class="month-cell${isToday ? ' today' : ''}"><div class="month-day">${day}</div><div class="month-bars">${bars}</div></div>`;
+    html += `<div class="month-cell${isToday ? ' today' : ''}" ondblclick="goToDay('${ds}')" title="Doble clic para ver día"><div class="month-day">${day}</div><div class="month-bars">${bars}</div></div>`;
   }
   html += '</div>';
   cont.innerHTML = html;
 }
+
+window.goToDay = function(ds) {
+  const [y,m,d] = ds.split('-').map(Number);
+  currentDate = new Date(y, m-1, d);
+  currentView = 'day';
+  document.querySelectorAll('.btn-view').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === 'day');
+  });
+  renderCalendar();
+};
 
 function renderWeek(cont, title) {
   const start = startOfWeek(currentDate);
@@ -278,7 +270,7 @@ function renderWeek(cont, title) {
   for (let i = 0; i < 7; i++) {
     const d = addDays(start, i);
     const isToday = dateToStr(d) === dateToStr(new Date());
-    html += `<div class="week-header${isToday ? ' today' : ''}">${d.toLocaleDateString('es-ES', { weekday: 'short' })}<br>${d.getDate()}/${d.getMonth()+1}</div>`;
+    html += `<div class="week-header${isToday ? ' today' : ''}" ondblclick="goToDay('${dateToStr(d)}')" title="Doble clic para ver día">${d.toLocaleDateString('es-ES', { weekday: 'short' })}<br>${d.getDate()}/${d.getMonth()+1}</div>`;
   }
   habitacionesUnicas.forEach(hab => {
     html += `<div class="week-room"><span class="room-dot" style="background:${roomColorMap[hab]}"></span>${hab}</div>`;
@@ -292,10 +284,10 @@ function renderWeek(cont, title) {
         if (!ing || !sal) return;
         if ((r.habitacion || r.idHabitacion) === hab && d >= ing && d < sal) {
           const color = roomColorMap[hab] || '#2563eb';
-          cellBars += `<div class="cal-bar-sm" style="background:${color}" onclick="openModal('${r.id}')" title="${r.nombre}">${r.nombre.split(' ')[0]}</div>`;
+          cellBars += `<div class="cal-bar-sm" style="background:${color}" onclick="openModal('${r.id}')" title="${r.nombre} | ${formatDMY(r.fechaIngreso)} → ${formatDMY(r.fechaSalida)}">${r.nombre.split(' ')[0]}</div>`;
         }
       });
-      html += `<div class="week-cell">${cellBars}</div>`;
+      html += `<div class="week-cell" ondblclick="goToDay('${ds}')">${cellBars}</div>`;
     }
   });
   if (habitacionesUnicas.length === 0) html += '<div class="week-empty">No hay reservas activas</div>';
@@ -305,10 +297,9 @@ function renderWeek(cont, title) {
 
 function renderDay(cont, title) {
   const d = new Date(currentDate);
-  title.textContent = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const ds = dateToStr(d);
+  title.textContent = d.toLocaleDateString('es-ES', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
   let html = '<div class="day-grid">';
-  html += '<div class="day-header">Habitación</div><div class="day-header">Reserva</div>';
+  html += '<div class="day-header">Habitación</div><div class="day-header">Reserva (desde ingreso hasta salida)</div>';
   habitacionesUnicas.forEach(hab => {
     html += `<div class="day-room"><span class="room-dot" style="background:${roomColorMap[hab]}"></span>${hab}</div>`;
     let info = '<div class="day-empty">Libre</div>';
@@ -319,9 +310,9 @@ function renderDay(cont, title) {
       if ((r.habitacion || r.idHabitacion) === hab && d >= ing && d < sal) {
         const color = roomColorMap[hab] || '#2563eb';
         info = `<div class="day-res" style="border-left:4px solid ${color}" onclick="openModal('${r.id}')">
-          <div><strong>${r.nombre}</strong> · ${r.telefono}</div>
-          <div class="muted">${r.fechaIngreso} → ${r.fechaSalida} · ${r.personas} pers. · <span class="badge badge-${r.estado}">${r.estado}</span> ${r.transferido ? '· TRANSFERIDO' : ''}</div>
-          ${r.observacion ? '<div class="muted">Obs: ' + r.observacion + '</div>' : ''}
+          <div><strong>${r.nombre}</strong> · Tel: ${r.telefono}${r.email ? ' · ' + r.email : ''}</div>
+          <div class="muted">Fecha: ${formatDMY(r.fechaIngreso)} a ${formatDMY(r.fechaSalida)} · Personas: ${r.personas || '-'} · Estado: ${r.estado} ${r.transferido ? '· TRANSFERIDO' : ''}</div>
+          ${r.observacion ? '<div class="muted">Observación: ' + r.observacion + '</div>' : ''}
         </div>`;
       }
     });
@@ -338,8 +329,8 @@ window.openModal = function(id) {
   selectedReserva = r;
   $('mId').textContent = r.id;
   $('mHab').textContent = r.habitacion || r.idHabitacion;
-  $('mIng').textContent = r.fechaIngreso;
-  $('mSal').textContent = r.fechaSalida;
+  $('mIng').textContent = formatDMY(r.fechaIngreso);
+  $('mSal').textContent = formatDMY(r.fechaSalida);
   $('mCli').textContent = r.nombre;
   $('mTel').textContent = r.telefono;
   $('mEmail').textContent = r.email || '-';
@@ -400,7 +391,6 @@ async function liberarModal() {
   } catch (e) { showMsg('msgAdmin', 'Error de conexión', 'error'); }
 }
 
-// keep old functions for compatibility
 window.cambiarEstado = async function(id, estado) {
   try {
     const res = await fetch(`/api/admin/reservas/${id}/estado`, {
