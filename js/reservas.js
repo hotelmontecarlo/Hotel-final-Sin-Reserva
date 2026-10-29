@@ -71,6 +71,8 @@ async function confirmarReserva() {
   const idHab = $('habSeleccionada').value;
   const fi = $('fechaIngreso').value;
   const fs = $('fechaSalida').value;
+  const horaIngreso = $('horaIngreso')?.value || '';
+  const horaSalida = $('horaSalida')?.value || '';
   const nombre = $('resNombre').value.trim();
   const tel = $('resTelefono').value.trim();
   const email = $('resEmail').value.trim();
@@ -87,6 +89,8 @@ async function confirmarReserva() {
         idHabitacion: idHab,
         fechaIngreso: fi,
         fechaSalida: fs,
+        horaIngreso,
+        horaSalida,
         nombre, telefono: tel, email, personas, observacion: obs
       })
     });

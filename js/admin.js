@@ -311,7 +311,7 @@ function renderDay(cont, title) {
         const color = roomColorMap[hab] || '#2563eb';
         info = `<div class="day-res" style="border-left:4px solid ${color}" onclick="openModal('${r.id}')">
           <div><strong>${r.nombre}</strong> · Tel: ${r.telefono}${r.email ? ' · ' + r.email : ''}</div>
-          <div class="muted">Fecha: ${formatDMY(r.fechaIngreso)} a ${formatDMY(r.fechaSalida)} · Personas: ${r.personas || '-'} · Estado: ${r.estado} ${r.transferido ? '· TRANSFERIDO' : ''}</div>
+          <div class="muted">Fecha: ${formatDMY(r.fechaIngreso)} a ${formatDMY(r.fechaSalida)}${r.horaIngreso || r.horaSalida ? ' · Hora: ' + (r.horaIngreso||'-') + ' / ' + (r.horaSalida||'-') : ''} · Personas: ${r.personas || '-'} · Estado: ${r.estado} ${r.transferido ? '· TRANSFERIDO' : ''}</div>
           ${r.observacion ? '<div class="muted">Observación: ' + r.observacion + '</div>' : ''}
         </div>`;
       }
@@ -331,6 +331,8 @@ window.openModal = function(id) {
   $('mHab').textContent = r.habitacion || r.idHabitacion;
   $('mIng').textContent = formatDMY(r.fechaIngreso);
   $('mSal').textContent = formatDMY(r.fechaSalida);
+  const mh = document.getElementById('mHora');
+  if (mh) mh.textContent = (r.horaIngreso || '-') + ' / ' + (r.horaSalida || '-');
   $('mCli').textContent = r.nombre;
   $('mTel').textContent = r.telefono;
   $('mEmail').textContent = r.email || '-';
