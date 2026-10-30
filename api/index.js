@@ -396,7 +396,7 @@ app.get('/api/calendario', async (req, res) => {
 
 app.post('/api/reservas', async (req, res) => {
   const body = req.body || {};
-  const { idHabitacion, fechaIngreso, fechaSalida, nombre, telefono, email, personas, observacion } = body;
+  const { idHabitacion, fechaIngreso, fechaSalida, horaIngreso, horaSalida, nombre, telefono, email, personas, observacion } = body;
   if (!idHabitacion || !fechaIngreso || !fechaSalida || !nombre || !telefono) {
     return res.status(400).json({ error: 'Faltan datos obligatorios' });
   }
