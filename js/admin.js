@@ -155,8 +155,8 @@ function renderTabla() {
     <tr>
       <td>${r.id}</td>
       <td>${r.habitacion || r.idHabitacion}</td>
-      <td>${r.fechaIngreso}</td>
-      <td>${r.fechaSalida}</td>
+      <td>${r.fechaIngreso || '-'}</td>
+      <td>${r.fechaSalida || '-'}</td>
       <td>${r.nombre}</td>
       <td>${r.telefono}</td>
       <td>${r.personas}</td>
@@ -297,26 +297,43 @@ function renderWeek(cont, title) {
 
 function renderDay(cont, title) {
   const d = new Date(currentDate);
-  title.textContent = d.toLocaleDateString('es-ES', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-  let html = '<div class="day-grid">';
-  html += '<div class="day-header">Habitación</div><div class="day-header">Reserva (desde ingreso hasta salida)</div>';
+  title.textContent = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  let html = '<div class="day-timeline">';
+  html += '<div class="day-timeline-header">';
+  html += '<div class="day-tl-corner">Habitación</div>';
+  for (let h = 0; h < 24; h++) {
+    html += `<div class="day-tl-hour">${String(h).padStart(2,'0')}:00</div>`;
+  }
+  html += '</div>';
   habitacionesUnicas.forEach(hab => {
-    html += `<div class="day-room"><span class="room-dot" style="background:${roomColorMap[hab]}"></span>${hab}</div>`;
-    let info = '<div class="day-empty">Libre</div>';
-    reservasCache.forEach(r => {
-      const ing = parseDate(r.fechaIngreso);
-      const sal = parseDate(r.fechaSalida);
-      if (!ing || !sal) return;
-      if ((r.habitacion || r.idHabitacion) === hab && d >= ing && d < sal) {
-        const color = roomColorMap[hab] || '#2563eb';
-        info = `<div class="day-res" style="border-left:4px solid ${color}" onclick="openModal('${r.id}')">
-          <div><strong>${r.nombre}</strong> · Tel: ${r.telefono}${r.email ? ' · ' + r.email : ''}</div>
-          <div class="muted">Fecha: ${r.fechaIngreso} a ${r.fechaSalida}${r.horaIngreso || r.horaSalida ? ' · Hora: ' + (r.horaIngreso||'-') + ' / ' + (r.horaSalida||'-') : ''} · Personas: ${r.personas || '-'} · Estado: ${r.estado} ${r.transferido ? '· TRANSFERIDO' : ''}</div>
-          ${r.observacion ? '<div class="muted">Observación: ' + r.observacion + '</div>' : ''}
-        </div>`;
-      }
-    });
-    html += `<div class="day-cell">${info}</div>`;
+    html += `<div class="day-timeline-row">`;
+    html += `<div class="day-tl-room"><span class="room-dot" style="background:${roomColorMap[hab]}"></span>${hab}</div>`;
+    for (let h = 0; h < 24; h++) {
+      let cellContent = '';
+      reservasCache.forEach(r => {
+        const ing = parseDate(r.fechaIngreso);
+        const sal = parseDate(r.fechaSalida);
+        if (!ing || !sal) return;
+        if ((r.habitacion || r.idHabitacion) === hab && d >= ing && d < sal) {
+          // check if this hour is within reservation hours if specified
+          let show = true;
+          if (r.horaIngreso && r.horaSalida) {
+            const hi = parseInt(r.horaIngreso.split(':')[0], 10);
+            const hs = parseInt(r.horaSalida.split(':')[0], 10);
+            if (!isNaN(hi) && !isNaN(hs)) {
+              // show if hour >= hi and hour < hs
+              if (h < hi || h >= hs) show = false;
+            }
+          }
+          if (show) {
+            const color = roomColorMap[hab] || '#2563eb';
+            cellContent = `<div class="tl-block" style="background:${color}" onclick="openModal('${r.id}')" title="${r.nombre} | ${r.fechaIngreso} ${r.horaIngreso||''} → ${r.fechaSalida} ${r.horaSalida||''}">${r.nombre.split(' ')[0]}</div>`;
+          }
+        }
+      });
+      html += `<div class="day-tl-cell">${cellContent}</div>`;
+    }
+    html += `</div>`;
   });
   if (habitacionesUnicas.length === 0) html += '<div class="day-empty-all">No hay reservas activas</div>';
   html += '</div>';
