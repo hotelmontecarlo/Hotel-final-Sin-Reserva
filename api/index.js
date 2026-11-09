@@ -701,6 +701,17 @@ app.post('/api/admin/habitaciones', async (req, res) => {
   }
 });
 
+app.get('/api/admin/debug-reservas', async (req, res) => {
+  if (!requireAdmin(req)) return res.status(401).json({ error: 'No autorizado' });
+  try {
+    const sheets = await getSheets();
+    const r = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: RESERVAS_TAB });
+    return res.json({ rows: r.data.values || [] });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 module.exports = app;
