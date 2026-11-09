@@ -633,6 +633,74 @@ app.post('/api/admin/usuarios', async (req, res) => {
   }
 });
 
+// Admin: habitaciones
+app.get('/api/admin/habitaciones', async (req, res) => {
+  if (!requireAdmin(req)) return res.status(401).json({ error: 'No autorizado' });
+  try {
+    const habs = await readHabitaciones();
+    return res.json(habs);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/admin/habitaciones/:id', async (req, res) => {
+  if (!requireAdmin(req)) return res.status(401).json({ error: 'No autorizado' });
+  const { id } = req.params;
+  const { nombre, tipo, activa } = req.body || {};
+  try {
+    const sheets = await getSheets();
+    const r = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: HABITACIONES_TAB });
+    const rows = r.data.values || [];
+    const head = rows[0] || [];
+    const ii = head.findIndex(h => String(h).toLowerCase() === 'id_habitacion');
+    if (ii < 0) throw new Error('Estructura inválida');
+    const rowIndex = rows.findIndex((row, idx) => idx > 0 && String(row[ii] || '').trim() === String(id).trim());
+    if (rowIndex <= 0) return res.status(404).json({ error: 'Habitación no encontrada' });
+    const rn = rowIndex + 1;
+    const updates = [];
+    const colOf = (name) => head.findIndex(h => String(h).toLowerCase() === name.toLowerCase());
+    if (nombre !== undefined && colOf('nombre') >= 0) updates.push({ col: colOf('nombre'), val: String(nombre) });
+    if (tipo !== undefined && colOf('tipo') >= 0) updates.push({ col: colOf('tipo'), val: String(tipo) });
+    if (activa !== undefined && colOf('activa') >= 0) updates.push({ col: colOf('activa'), val: activa ? 'SI' : 'NO' });
+    for (const u of updates) {
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SHEET_ID,
+        range: `${HABITACIONES_TAB}!${String.fromCharCode(65 + u.col)}${rn}`,
+        valueInputOption: 'RAW',
+        resource: { values: [[u.val]] }
+      });
+    }
+    return res.json({ ok: true });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/habitaciones', async (req, res) => {
+  if (!requireAdmin(req)) return res.status(401).json({ error: 'No autorizado' });
+  const { nombre, tipo, activa } = req.body || {};
+  if (!nombre) return res.status(400).json({ error: 'Falta el nombre' });
+  try {
+    await ensureHabitaciones();
+    const sheets = await getSheets();
+    const r = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: HABITACIONES_TAB });
+    const rows = r.data.values || [];
+    let nextId = 1;
+    rows.slice(1).forEach(row => { const n = parseInt(row[0], 10); if (!isNaN(n) && n >= nextId) nextId = n + 1; });
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: HABITACIONES_TAB + '!A1:D1',
+      valueInputOption: 'RAW',
+      insertDataOption: 'INSERT_ROWS',
+      resource: { values: [[String(nextId), String(nombre), String(tipo || ''), activa === false ? 'NO' : 'SI']] }
+    });
+    return res.json({ ok: true, id: nextId });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 module.exports = app;
