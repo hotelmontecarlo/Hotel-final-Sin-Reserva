@@ -9,9 +9,18 @@ function showMsg(id, text, type = 'info') {
   el.className = 'msg show ' + type;
   if (!text) el.className = 'msg';
 }
-function hideMsg(id) { showMsg(id, '', ''); }
 
-function fmtDate(d) { return d || ''; }
+function roomImage(tipo, nombre) {
+  const t = String(tipo || '').toLowerCase();
+  const n = String(nombre || '').toLowerCase();
+  const all = t + ' ' + n;
+  if (all.includes('cu') && (all.includes('druple') || all.includes('druple'))) return '/images/rooms/quad.jpg';
+  if (all.includes('triple') && all.includes('matrimonial')) return '/images/rooms/triplemat.jpg';
+  if (all.includes('triple')) return '/images/rooms/triple.jpg';
+  if (all.includes('twin') || all.includes('doble')) return '/images/rooms/twin.jpg';
+  if (all.includes('single') || all.includes('matrimonial')) return '/images/rooms/mat.jpg';
+  return '/images/rooms/twin.jpg';
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const yearEl = $('year');
@@ -22,6 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const btnReservar = $('btnReservar');
   if (btnReservar) btnReservar.addEventListener('click', confirmarReserva);
+
+  // default dates: today and tomorrow
+  const today = new Date();
+  const tomorrow = new Date(today.getTime() + 86400000);
+  const iso = d => d.toISOString().slice(0,10);
+  if ($('fechaIngreso') && !$('fechaIngreso').value) $('fechaIngreso').value = iso(today);
+  if ($('fechaSalida') && !$('fechaSalida').value) $('fechaSalida').value = iso(tomorrow);
 });
 
 async function buscarDisponibilidad() {
@@ -46,23 +62,29 @@ function renderHabitaciones() {
   const cont = $('habitacionesList');
   if (!cont) return;
   if (!habitacionesDisponibles.length) {
-    cont.innerHTML = '<p class="muted">No hay habitaciones disponibles.</p>';
+    cont.innerHTML = '<p class="muted">No hay habitaciones disponibles para esas fechas.</p>';
     return;
   }
   cont.innerHTML = habitacionesDisponibles.map(h => `
-    <div class="hab-item">
-      <div>
-        <div class="info">${h.nombre}</div>
-        <div class="tipo">${h.tipo || ''}</div>
+    <div class="hab-card">
+      <img class="hab-img" src="${roomImage(h.tipo, h.nombre)}" alt="${h.nombre}" loading="lazy">
+      <div class="hab-body">
+        <div class="hab-name">${h.nombre}</div>
+        <div class="hab-type">${h.tipo || ''}</div>
+        <button class="btn btn-primary" onclick="seleccionarHabitacion('${h.id}','${h.nombre.replace(/'/g,"\\'")}','${(h.tipo||'').replace(/'/g,"\\'")}')">Seleccionar</button>
       </div>
-      <button class="btn btn-primary" onclick="seleccionarHabitacion('${h.id}','${h.nombre.replace(/'/g,"\\'")}')">Seleccionar</button>
     </div>
   `).join('');
 }
 
-window.seleccionarHabitacion = function(id, nombre) {
+window.seleccionarHabitacion = function(id, nombre, tipo) {
   $('habSeleccionada').value = id;
   $('habNombre').textContent = nombre;
+  const img = $('habImagen');
+  if (img) {
+    img.src = roomImage(tipo, nombre);
+    img.alt = nombre;
+  }
   $('cardReserva').style.display = 'block';
   $('cardReserva').scrollIntoView({ behavior: 'smooth' });
 };

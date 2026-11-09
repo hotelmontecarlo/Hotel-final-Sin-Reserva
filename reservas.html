@@ -25,39 +25,47 @@
     <section class="hero-sm">
       <div class="container">
         <h1>Sistema de Reservas</h1>
-        <p>Seleccione habitación y fechas para verificar disponibilidad</p>
+        <p>Seleccione fechas, elija su habitación y confirme</p>
       </div>
     </section>
 
     <section class="container section">
-      <div class="grid grid-2">
-        <div class="card">
-          <h2>1. Seleccione fechas</h2>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Fecha de ingreso</label>
-              <input type="date" id="fechaIngreso">
-            </div>
-            <div class="form-group">
-              <label>Fecha de salida</label>
-              <input type="date" id="fechaSalida">
-            </div>
+      <div class="card">
+        <h2>1. Seleccione fechas</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fecha de ingreso</label>
+            <input type="date" id="fechaIngreso">
           </div>
-          <button class="btn btn-primary" id="btnBuscar">Buscar disponibilidad</button>
-          <div id="msgBuscar" class="msg"></div>
+          <div class="form-group">
+            <label>Fecha de salida</label>
+            <input type="date" id="fechaSalida">
+          </div>
+          <div class="form-group" style="justify-content:flex-end">
+            <button class="btn btn-primary" id="btnBuscar">Buscar disponibilidad</button>
+          </div>
         </div>
+        <div id="msgBuscar" class="msg"></div>
+      </div>
 
-        <div class="card">
-          <h2>2. Habitaciones disponibles</h2>
-          <div id="habitacionesList" class="habitaciones-list"></div>
-          <div id="msgHab" class="msg"></div>
+      <div class="card mt-2">
+        <h2>2. Habitaciones disponibles</h2>
+        <div id="habitacionesList" class="rooms-grid">
+          <p class="muted">Seleccione las fechas y presione "Buscar disponibilidad".</p>
         </div>
+        <div id="msgHab" class="msg"></div>
       </div>
 
       <div class="card mt-2" id="cardReserva" style="display:none">
         <h2>3. Datos de la reserva</h2>
         <input type="hidden" id="habSeleccionada">
-        <div class="selected-hab">Habitación seleccionada: <strong id="habNombre"></strong></div>
+        <div class="selected-hab">
+          <img id="habImagen" class="selected-hab-img" src="/images/rooms/twin.jpg" alt="Habitación seleccionada">
+          <div>
+            <div class="muted" style="font-size:.85rem">Habitación seleccionada</div>
+            <strong id="habNombre"></strong>
+          </div>
+        </div>
         <div class="form-row">
           <div class="form-group">
             <label>Nombre completo *</label>
@@ -70,22 +78,22 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Hora de ingreso</label>
-            <input type="time" id="horaIngreso">
-          </div>
-          <div class="form-group">
-            <label>Hora de salida</label>
-            <input type="time" id="horaSalida">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
             <label>Email</label>
             <input type="email" id="resEmail" placeholder="correo@ejemplo.cl">
           </div>
           <div class="form-group">
             <label>Nº de personas</label>
             <input type="number" id="resPersonas" min="1" value="2">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Hora de ingreso</label>
+            <input type="time" id="horaIngreso">
+          </div>
+          <div class="form-group">
+            <label>Hora de salida</label>
+            <input type="time" id="horaSalida">
           </div>
         </div>
         <div class="form-group">

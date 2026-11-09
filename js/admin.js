@@ -298,45 +298,46 @@ function renderWeek(cont, title) {
 function renderDay(cont, title) {
   const d = new Date(currentDate);
   title.textContent = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  let html = '<div class="day-timeline">';
-  html += '<div class="day-timeline-header">';
-  html += '<div class="day-tl-corner">Habitación</div>';
-  for (let h = 0; h < 24; h++) {
-    html += `<div class="day-tl-hour">${String(h).padStart(2,'0')}:00</div>`;
+  const habs = habitacionesUnicas;
+  let html = '<div class="day-timeline"><table class="tl-table">';
+  // header: hours column + room columns
+  html += '<thead><tr><th class="tl-hour-col">Hora</th>';
+  habs.forEach(hab => {
+    html += `<th class="tl-room-col"><span class="room-dot" style="background:${roomColorMap[hab]}"></span>${hab}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+  if (habs.length === 0) {
+    html += '<tr><td colspan="2" class="day-empty-all">No hay reservas activas</td></tr>';
   }
-  html += '</div>';
-  habitacionesUnicas.forEach(hab => {
-    html += `<div class="day-timeline-row">`;
-    html += `<div class="day-tl-room"><span class="room-dot" style="background:${roomColorMap[hab]}"></span>${hab}</div>`;
-    for (let h = 0; h < 24; h++) {
-      let cellContent = '';
+  for (let h = 0; h < 24; h++) {
+    const hh = String(h).padStart(2, '0') + ':00';
+    html += `<tr><td class="tl-hour">${hh}</td>`;
+    habs.forEach(hab => {
+      let content = '';
       reservasCache.forEach(r => {
         const ing = parseDate(r.fechaIngreso);
         const sal = parseDate(r.fechaSalida);
         if (!ing || !sal) return;
-        if ((r.habitacion || r.idHabitacion) === hab && d >= ing && d < sal) {
-          // check if this hour is within reservation hours if specified
-          let show = true;
-          if (r.horaIngreso && r.horaSalida) {
-            const hi = parseInt(r.horaIngreso.split(':')[0], 10);
-            const hs = parseInt(r.horaSalida.split(':')[0], 10);
-            if (!isNaN(hi) && !isNaN(hs)) {
-              // show if hour >= hi and hour < hs
-              if (h < hi || h >= hs) show = false;
-            }
-          }
-          if (show) {
-            const color = roomColorMap[hab] || '#2563eb';
-            cellContent = `<div class="tl-block" style="background:${color}" onclick="openModal('${r.id}')" title="${r.nombre} | ${r.fechaIngreso} ${r.horaIngreso||''} → ${r.fechaSalida} ${r.horaSalida||''}">${r.nombre.split(' ')[0]}</div>`;
+        if ((r.habitacion || r.idHabitacion) !== hab) return;
+        if (!(d >= ing && d < sal)) return;
+        let show = true;
+        if (r.horaIngreso && r.horaSalida) {
+          const hi = parseInt(String(r.horaIngreso).split(':')[0], 10);
+          const hs = parseInt(String(r.horaSalida).split(':')[0], 10);
+          if (!isNaN(hi) && !isNaN(hs)) {
+            if (h < hi || h >= hs) show = false;
           }
         }
+        if (show) {
+          const color = roomColorMap[hab] || '#2563eb';
+          content = `<div class="tl-block" style="background:${color}" onclick="openModal('${r.id}')" title="${r.nombre} | ${r.fechaIngreso} ${r.horaIngreso||''} → ${r.fechaSalida} ${r.horaSalida||''}">${r.nombre.split(' ')[0]}</div>`;
+        }
       });
-      html += `<div class="day-tl-cell">${cellContent}</div>`;
-    }
-    html += `</div>`;
-  });
-  if (habitacionesUnicas.length === 0) html += '<div class="day-empty-all">No hay reservas activas</div>';
-  html += '</div>';
+      html += `<td class="tl-cell">${content}</td>`;
+    });
+    html += '</tr>';
+  }
+  html += '</tbody></table></div>';
   cont.innerHTML = html;
 }
 
