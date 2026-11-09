@@ -3,74 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de administración de reservas del Hotel Montecarlo.">
   <title>Administración de Reservas | Hotel Montecarlo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
 </head>
-<body>
-  <header class="header">
-    <div class="container header-inner">
-      <a href="/" class="logo">Hotel <span>Montecarlo</span></a>
-      <nav class="nav">
+<body class="ad-body">
+
+  <!-- ===== NAV ===== -->
+  <header class="ad-nav" id="adNav">
+    <div class="ad-container ad-nav-inner">
+      <a href="/" class="ad-brand" aria-label="Hotel Montecarlo - Inicio">
+        <img src="/images/logo-montecarlo.png" alt="Hotel Montecarlo">
+      </a>
+      <nav class="ad-links">
         <a href="/">Inicio</a>
         <a href="/reservas">Reservas</a>
         <a href="/admin" class="active">Administración</a>
-        <button id="btnLogout" class="btn-link" style="display:none">Cerrar sesión</button>
+        <button id="btnLogout" class="ad-logout" style="display:none">Cerrar sesión</button>
       </nav>
     </div>
   </header>
 
-  <main>
-    <section class="hero-sm">
-      <div class="container">
-        <h1>Administración de Reservas</h1>
-        <p>Calendario visual por habitación, mes, semana y día</p>
-      </div>
-    </section>
+  <!-- ===== HERO ===== -->
+  <section class="ad-hero">
+    <div class="ad-container ad-hero-inner">
+      <span class="ad-eyebrow light">Panel de administración</span>
+      <h1>Gestión de Reservas</h1>
+      <p>Calendario visual por habitación · vistas mes, semana y día</p>
+    </div>
+  </section>
 
-    <section class="container section" id="loginSection">
-      <div class="card" style="max-width:400px;margin:0 auto">
-        <h2>Acceso Administrador</h2>
-        <div class="form-group">
-          <label>Usuario</label>
-          <input type="text" id="loginUser">
+  <main class="ad-main">
+
+    <!-- ===== LOGIN ===== -->
+    <section class="ad-container" id="loginSection">
+      <div class="ad-login-card">
+        <div class="ad-login-head">
+          <span class="ad-login-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path><circle cx="12" cy="15.5" r="1.3"></circle></svg>
+          </span>
+          <h2>Acceso administrador</h2>
+          <p>Ingrese sus credenciales para gestionar las reservas.</p>
         </div>
-        <div class="form-group">
-          <label>Contraseña</label>
-          <input type="password" id="loginPass">
-        </div>
-        <button class="btn btn-primary" id="btnLogin">Ingresar</button>
+        <label class="ad-field">
+          <span class="ad-field-label">Usuario</span>
+          <input type="text" id="loginUser" placeholder="Usuario" autocomplete="username">
+        </label>
+        <label class="ad-field">
+          <span class="ad-field-label">Contraseña</span>
+          <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password">
+        </label>
+        <button class="ad-btn ad-btn-gold ad-btn-block" id="btnLogin">Ingresar</button>
         <div id="msgLogin" class="msg"></div>
       </div>
     </section>
 
-    <section class="container section" id="adminSection" style="display:none">
-      <div class="card">
-        <div class="calendar-toolbar">
-          <div class="calendar-nav">
-            <button class="btn btn-outline" id="btnPrev">◀ Anterior</button>
-            <button class="btn btn-outline" id="btnHoy">Hoy</button>
-            <button class="btn btn-outline" id="btnNext">Siguiente ▶</button>
-            <h2 id="calendarTitle" class="calendar-title">Calendario</h2>
+    <!-- ===== ADMIN ===== -->
+    <section class="ad-container" id="adminSection" style="display:none">
+
+      <!-- Estadísticas -->
+      <div class="ad-stats">
+        <div class="ad-stat">
+          <span class="ad-stat-icon" aria-hidden="true">📋</span>
+          <div><small>Total reservas</small><strong id="statTotal">0</strong></div>
+        </div>
+        <div class="ad-stat">
+          <span class="ad-stat-icon" aria-hidden="true">🛎️</span>
+          <div><small>Reservadas</small><strong id="statReservadas">0</strong></div>
+        </div>
+        <div class="ad-stat">
+          <span class="ad-stat-icon" aria-hidden="true">✓</span>
+          <div><small>Confirmadas</small><strong id="statConfirmadas">0</strong></div>
+        </div>
+        <div class="ad-stat">
+          <span class="ad-stat-icon" aria-hidden="true">🏨</span>
+          <div><small>Ocupadas hoy</small><strong id="statOcupadasHoy">0</strong></div>
+        </div>
+      </div>
+
+      <!-- Calendario -->
+      <div class="ad-card">
+        <div class="ad-cal-toolbar">
+          <div class="ad-cal-nav">
+            <button class="ad-btn ad-btn-ghost ad-btn-icon" id="btnPrev" aria-label="Anterior">◀</button>
+            <button class="ad-btn ad-btn-ghost" id="btnHoy">Hoy</button>
+            <button class="ad-btn ad-btn-ghost ad-btn-icon" id="btnNext" aria-label="Siguiente">▶</button>
+            <h2 id="calendarTitle" class="ad-cal-title">Calendario</h2>
           </div>
-          <div class="calendar-views">
-            <button class="btn-view active" data-view="month">Mes</button>
-            <button class="btn-view" data-view="week">Semana</button>
-            <button class="btn-view" data-view="day">Día</button>
-            <button class="btn btn-outline" id="btnRecargar">Actualizar</button>
+          <div class="ad-cal-views">
+            <button class="ad-view btn-view active" data-view="month">Mes</button>
+            <button class="ad-view btn-view" data-view="week">Semana</button>
+            <button class="ad-view btn-view" data-view="day">Día</button>
+            <button class="ad-btn ad-btn-outline" id="btnRecargar">Actualizar</button>
           </div>
         </div>
-        <div id="roomLegend" class="room-legend"></div>
-        <div id="calendarMain" class="calendar-main"></div>
+        <div id="roomLegend" class="ad-legend"></div>
+        <div id="calendarMain" class="ad-calendar"></div>
         <div id="msgAdmin" class="msg"></div>
       </div>
 
-      <div class="card mt-2">
-        <div class="admin-header">
-          <h2>Listado completo de reservas</h2>
-          <div class="filters">
+      <!-- Listado -->
+      <div class="ad-card">
+        <div class="ad-card-head">
+          <div>
+            <span class="ad-eyebrow">Registro</span>
+            <h2>Listado completo de reservas</h2>
+          </div>
+          <div class="ad-filters">
             <select id="filtroEstado">
               <option value="TODOS">Todos los estados</option>
               <option value="RESERVADA">Reservada</option>
@@ -81,8 +123,8 @@
             </select>
           </div>
         </div>
-        <div class="table-wrapper">
-          <table class="table" id="tablaReservas">
+        <div class="ad-table-wrapper">
+          <table class="ad-table" id="tablaReservas">
             <thead>
               <tr>
                 <th>ID</th>
@@ -105,11 +147,12 @@
     </section>
   </main>
 
+  <!-- ===== MODAL ===== -->
   <div id="resModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <h3>Detalle de Reserva</h3>
-        <button class="modal-close" id="modalClose">×</button>
+        <button class="modal-close" id="modalClose" aria-label="Cerrar">×</button>
       </div>
       <div class="modal-body">
         <div class="modal-grid">
@@ -127,17 +170,18 @@
           <div class="modal-full"><strong>Observación:</strong> <span id="mObs"></span></div>
         </div>
         <div class="modal-actions">
-          <button class="btn btn-outline" id="mBtnConf">Marcar CONFIRMADA</button>
-          <button class="btn btn-warning" id="mBtnTrans">Cambiar Transferido</button>
-          <button class="btn btn-danger" id="mBtnCanc">Cancelar</button>
-          <button class="btn btn-success" id="mBtnLib">Liberar Habitación</button>
+          <button class="ad-btn ad-btn-outline" id="mBtnConf">Marcar CONFIRMADA</button>
+          <button class="ad-btn ad-btn-warning" id="mBtnTrans">Cambiar Transferido</button>
+          <button class="ad-btn ad-btn-danger" id="mBtnCanc">Cancelar</button>
+          <button class="ad-btn ad-btn-success" id="mBtnLib">Liberar Habitación</button>
         </div>
       </div>
     </div>
   </div>
 
-  <footer class="footer">
-    <div class="container">
+  <!-- ===== FOOTER ===== -->
+  <footer class="ad-footer">
+    <div class="ad-container">
       <p>© <span id="year"></span> Hotel Montecarlo. Todos los derechos reservados.</p>
     </div>
   </footer>

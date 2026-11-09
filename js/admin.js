@@ -43,6 +43,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnLogin = $('btnLogin');
   if (btnLogin) btnLogin.addEventListener('click', doLogin);
 
+  const loginPass = $('loginPass');
+  if (loginPass) loginPass.addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+  const loginUser = $('loginUser');
+  if (loginUser) loginUser.addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+
+  const adNav = $('adNav');
+  const onScroll = () => { if (adNav) adNav.classList.toggle('is-scrolled', window.scrollY > 20); };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
   const btnLogout = $('btnLogout');
   if (btnLogout) btnLogout.addEventListener('click', doLogout);
 
@@ -135,6 +145,21 @@ async function cargarReservas() {
     habitacionesUnicas.forEach((h, idx) => {
       if (!roomColorMap[h]) roomColorMap[h] = roomColors[idx % roomColors.length];
     });
+
+    // Estadísticas del panel
+    const hoyStr = dateToStr(new Date());
+    const total = reservasCacheFull.length;
+    const reservadas = reservasCacheFull.filter(r => r.estado === 'RESERVADA').length;
+    const confirmadas = reservasCacheFull.filter(r => r.estado === 'CONFIRMADA').length;
+    const ocupadasHoy = reservasCacheFull.filter(r =>
+      r.estado !== 'CANCELADA' && r.estado !== 'LIBERADA' &&
+      r.fechaIngreso <= hoyStr && r.fechaSalida > hoyStr
+    ).length;
+    if ($('statTotal')) $('statTotal').textContent = total;
+    if ($('statReservadas')) $('statReservadas').textContent = reservadas;
+    if ($('statConfirmadas')) $('statConfirmadas').textContent = confirmadas;
+    if ($('statOcupadasHoy')) $('statOcupadasHoy').textContent = ocupadasHoy;
+
     renderTabla();
     renderCalendar();
     renderLegend();
@@ -165,7 +190,7 @@ function renderTabla() {
       <td>${r.observacion || ''}</td>
       <td>
         <div style="display:flex;gap:.3rem;flex-wrap:wrap">
-          <button class="btn btn-outline" style="font-size:.75rem;padding:.3rem .5rem" onclick="openModal('${r.id}')">Ver/Editar</button>
+          <button class="ad-btn ad-btn-outline ad-btn-sm" onclick="openModal('${r.id}')">Ver/Editar</button>
         </div>
       </td>
     </tr>
