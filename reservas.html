@@ -3,112 +3,225 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Reserve su habitación en Hotel Montecarlo, Bahía Inglesa, Región de Atacama. Confirmación inmediata, desayuno continental y Wi-Fi gratuito.">
   <title>Reservas | Hotel Montecarlo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/reservas.css">
 </head>
-<body>
-  <header class="header">
-    <div class="container header-inner">
-      <a href="/" class="logo">Hotel <span>Montecarlo</span></a>
-      <nav class="nav">
+<body class="bk-body">
+
+  <!-- ===== NAV ===== -->
+  <header class="bk-nav" id="bkNav">
+    <div class="bk-container bk-nav-inner">
+      <a href="/" class="bk-brand" aria-label="Hotel Montecarlo - Inicio">
+        <img src="/images/logo-montecarlo.png" alt="Hotel Montecarlo">
+      </a>
+      <nav class="bk-links" id="bkLinks">
         <a href="/">Inicio</a>
+        <a href="/#habitaciones">Habitaciones</a>
+        <a href="/#servicios">Servicios</a>
         <a href="/reservas" class="active">Reservas</a>
-        <a href="/admin">Administración</a>
+        <a href="/admin">Admin</a>
+        <a href="#buscador" class="bk-nav-cta">Reservar</a>
       </nav>
+      <button class="bk-menu-btn" id="bkMenuBtn" aria-label="Abrir menú" aria-expanded="false">☰</button>
     </div>
   </header>
 
-  <main>
-    <section class="hero-sm">
-      <div class="container">
-        <h1>Sistema de Reservas</h1>
-        <p>Seleccione fechas, elija su habitación y confirme</p>
+  <!-- ===== HERO ===== -->
+  <section class="bk-hero">
+    <div class="bk-hero-bg" aria-hidden="true"></div>
+    <div class="bk-hero-overlay" aria-hidden="true"></div>
+    <div class="bk-container bk-hero-inner">
+      <span class="bk-eyebrow light">Bahía Inglesa · Atacama · Chile</span>
+      <h1>Su descanso ideal<br><span class="bk-script">comienza aquí</span></h1>
+      <p class="bk-hero-sub">Reserve su habitación en el Hotel Montecarlo y despierte frente al mar y las dunas de Atacama.</p>
+      <div class="bk-hero-trust">
+        <span>Confirmación inmediata</span>
+        <span>Desayuno continental</span>
+        <span>Wi-Fi gratuito</span>
       </div>
-    </section>
+      <a href="#buscador" class="bk-btn bk-btn-gold bk-btn-lg">Reservar ahora</a>
+    </div>
+  </section>
 
-    <section class="container section">
-      <div class="card">
-        <h2>1. Seleccione fechas</h2>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Fecha de ingreso</label>
+  <!-- ===== BUSCADOR ===== -->
+  <section class="bk-search-section" id="buscador">
+    <div class="bk-container">
+      <form class="bk-search-card" id="bkSearchForm" autocomplete="off">
+        <div class="bk-search-intro">
+          <span class="bk-search-kicker">Planifique su estadía</span>
+          <h2>Ver disponibilidad</h2>
+        </div>
+        <div class="bk-search-fields">
+          <label class="bk-field">
+            <span class="bk-field-label">Check-in</span>
             <input type="date" id="fechaIngreso">
-          </div>
-          <div class="form-group">
-            <label>Fecha de salida</label>
+          </label>
+          <label class="bk-field">
+            <span class="bk-field-label">Check-out</span>
             <input type="date" id="fechaSalida">
-          </div>
-          <div class="form-group" style="justify-content:flex-end">
-            <button class="btn btn-primary" id="btnBuscar">Buscar disponibilidad</button>
-          </div>
+          </label>
+          <label class="bk-field">
+            <span class="bk-field-label">Huéspedes</span>
+            <select id="searchPersonas">
+              <option value="1">1 huésped</option>
+              <option value="2" selected>2 huéspedes</option>
+              <option value="3">3 huéspedes</option>
+              <option value="4">4 huéspedes</option>
+              <option value="5">5 huéspedes</option>
+              <option value="6">6 huéspedes</option>
+            </select>
+          </label>
+          <button type="button" class="bk-btn bk-btn-gold bk-btn-search" id="btnBuscar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.2-3.2"></path></svg>
+            Buscar disponibilidad
+          </button>
         </div>
         <div id="msgBuscar" class="msg"></div>
-      </div>
+      </form>
+    </div>
+  </section>
 
-      <div class="card mt-2">
-        <h2>2. Habitaciones disponibles</h2>
-        <div id="habitacionesList" class="rooms-grid">
-          <p class="muted">Seleccione las fechas y presione "Buscar disponibilidad".</p>
+  <!-- ===== PASOS ===== -->
+  <section class="bk-container bk-steps" aria-label="Cómo reservar">
+    <div class="bk-step">
+      <span class="bk-step-num">1</span>
+      <div><strong>Elija sus fechas</strong><small>Seleccione check-in y check-out</small></div>
+    </div>
+    <div class="bk-step">
+      <span class="bk-step-num">2</span>
+      <div><strong>Elija su habitación</strong><small>Compare y seleccione la ideal</small></div>
+    </div>
+    <div class="bk-step">
+      <span class="bk-step-num">3</span>
+      <div><strong>Confirme sus datos</strong><small>Reciba su código de reserva</small></div>
+    </div>
+  </section>
+
+  <!-- ===== HABITACIONES ===== -->
+  <section class="bk-container bk-section" id="habitaciones">
+    <header class="bk-section-head">
+      <span class="bk-eyebrow">Nuestras habitaciones</span>
+      <h2 class="bk-section-title">Elija su refugio</h2>
+      <p class="bk-section-sub" id="resultsSubtitle">Seleccione sus fechas para ver las habitaciones disponibles.</p>
+    </header>
+
+    <div id="habitacionesList" class="bk-rooms-grid">
+      <div class="bk-placeholder">
+        <div class="bk-placeholder-icon">✦</div>
+        <p>Seleccione sus fechas y presione <strong>Buscar disponibilidad</strong> para ver las habitaciones libres.</p>
+      </div>
+    </div>
+    <div id="msgHab" class="msg"></div>
+  </section>
+
+  <!-- ===== FORMULARIO DE RESERVA ===== -->
+  <section class="bk-container bk-section" id="cardReserva" style="display:none">
+    <div class="bk-booking">
+      <aside class="bk-summary">
+        <div class="bk-summary-media">
+          <img id="habImagen" src="/images/rooms/twin.jpg" alt="Habitación seleccionada">
+          <span class="bk-summary-badge">Su selección</span>
         </div>
-        <div id="msgHab" class="msg"></div>
-      </div>
+        <div class="bk-summary-body">
+          <h3 id="habNombre">—</h3>
+          <p class="bk-summary-type" id="habTipoResumen">—</p>
+          <ul class="bk-summary-list">
+            <li><span>Check-in</span><strong id="sumIngreso">—</strong></li>
+            <li><span>Check-out</span><strong id="sumSalida">—</strong></li>
+            <li><span>Huéspedes</span><strong id="sumPersonas">—</strong></li>
+          </ul>
+          <div class="bk-summary-note">Le confirmaremos su reserva a la brevedad. Si desea modificar algo, contáctenos indicando su código de reserva.</div>
+        </div>
+      </aside>
 
-      <div class="card mt-2" id="cardReserva" style="display:none">
-        <h2>3. Datos de la reserva</h2>
+      <div class="bk-form-panel">
+        <span class="bk-eyebrow">Paso final</span>
+        <h2 class="bk-form-title">Datos de la reserva</h2>
         <input type="hidden" id="habSeleccionada">
-        <div class="selected-hab">
-          <img id="habImagen" class="selected-hab-img" src="/images/rooms/twin.jpg" alt="Habitación seleccionada">
-          <div>
-            <div class="muted" style="font-size:.85rem">Habitación seleccionada</div>
-            <strong id="habNombre"></strong>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Nombre completo *</label>
+        <div class="bk-form-grid">
+          <label class="bk-field">
+            <span class="bk-field-label">Nombre completo *</span>
             <input type="text" id="resNombre" placeholder="Nombre y apellido">
-          </div>
-          <div class="form-group">
-            <label>Teléfono *</label>
+          </label>
+          <label class="bk-field">
+            <span class="bk-field-label">Teléfono *</span>
             <input type="tel" id="resTelefono" placeholder="+56 9 ...">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Email</label>
+          </label>
+          <label class="bk-field">
+            <span class="bk-field-label">Email</span>
             <input type="email" id="resEmail" placeholder="correo@ejemplo.cl">
-          </div>
-          <div class="form-group">
-            <label>Nº de personas</label>
+          </label>
+          <label class="bk-field">
+            <span class="bk-field-label">Nº de personas</span>
             <input type="number" id="resPersonas" min="1" value="2">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Hora de ingreso</label>
+          </label>
+          <label class="bk-field">
+            <span class="bk-field-label">Hora de ingreso</span>
             <input type="time" id="horaIngreso">
-          </div>
-          <div class="form-group">
-            <label>Hora de salida</label>
+          </label>
+          <label class="bk-field">
+            <span class="bk-field-label">Hora de salida</span>
             <input type="time" id="horaSalida">
-          </div>
+          </label>
+          <label class="bk-field bk-field-full">
+            <span class="bk-field-label">Observaciones</span>
+            <textarea id="resObs" rows="3" placeholder="Comentarios adicionales"></textarea>
+          </label>
         </div>
-        <div class="form-group">
-          <label>Observaciones</label>
-          <textarea id="resObs" rows="3" placeholder="Comentarios adicionales"></textarea>
-        </div>
-        <button class="btn btn-success" id="btnReservar">Confirmar Reserva</button>
+        <button type="button" class="bk-btn bk-btn-gold bk-btn-lg bk-btn-block" id="btnReservar">Confirmar reserva</button>
         <div id="msgReserva" class="msg"></div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer class="footer">
-    <div class="container">
-      <p>© <span id="year"></span> Hotel Montecarlo. Todos los derechos reservados.</p>
+  <!-- ===== BENEFICIOS ===== -->
+  <section class="bk-benefits">
+    <div class="bk-container bk-benefits-grid">
+      <div class="bk-benefit">
+        <span class="bk-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13a3 3 0 0 1 0 6H4"></path><path d="M4 8V6a2 2 0 0 1 2-2h1"></path><path d="M4 14h13"></path><path d="M3 20h18"></path></svg></span>
+        <div><strong>Desayuno continental</strong><span>08:00 – 10:00 hrs</span></div>
+      </div>
+      <div class="bk-benefit">
+        <span class="bk-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5a10 10 0 0 1 14 0"></path><path d="M8.5 16a5 5 0 0 1 7 0"></path><path d="M2 9a15 15 0 0 1 20 0"></path><circle cx="12" cy="19.5" r="1"></circle></svg></span>
+        <div><strong>Wi-Fi gratuito</strong><span>En todas las áreas</span></div>
+      </div>
+      <div class="bk-benefit">
+        <span class="bk-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"></path><path d="M6 12V6a2 2 0 0 1 2-2h1"></path><path d="M8 19v2"></path><path d="M16 19v2"></path></svg></span>
+        <div><strong>Baño privado</strong><span>Agua caliente 24/7</span></div>
+      </div>
+      <div class="bk-benefit">
+        <span class="bk-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"></path></svg></span>
+        <div><strong>Atención personalizada</strong><span>Servicio de mucama</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bk-footer">
+    <div class="bk-container bk-footer-grid">
+      <div>
+        <img src="/images/logo-montecarlo.png" class="bk-footer-logo" alt="Hotel Montecarlo">
+        <p>Un lugar tranquilo y silencioso para relajarse en el corazón de Caldera – Bahía Inglesa, Región de Atacama, Chile.</p>
+      </div>
+      <div>
+        <h4>Navegación</h4>
+        <a href="/">Inicio</a>
+        <a href="/reservas">Reservas</a>
+        <a href="/admin">Administración</a>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>Bahía Inglesa, Atacama, Chile</p>
+        <p>reservas@hotelmontecarlo.cl</p>
+        <p>Confirmación sujeta a disponibilidad.</p>
+      </div>
+    </div>
+    <div class="bk-footer-bottom">
+      <div class="bk-container">© <span id="year"></span> Hotel Montecarlo. Todos los derechos reservados.</div>
     </div>
   </footer>
 
