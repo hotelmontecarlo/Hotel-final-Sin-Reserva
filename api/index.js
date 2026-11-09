@@ -236,7 +236,7 @@ async function ensureReservas() {
     if (rows.length === 0) {
       await sheets.spreadsheets.values.update({
         spreadsheetId: SHEET_ID,
-        range: RESERVAS_TAB + '!A1:N1',
+        range: RESERVAS_TAB + '!A1:P1',
         valueInputOption: 'RAW',
         resource: { values: [['id_reserva', 'id_habitacion', 'habitacion', 'fecha_ingreso', 'fecha_salida', 'hora_ingreso', 'hora_salida', 'nombre', 'telefono', 'email', 'personas', 'estado', 'transferido', 'observacion', 'creado', 'actualizado']] }
       });
@@ -252,9 +252,9 @@ async function ensureReservas() {
     }
     await sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
-      range: RESERVAS_TAB + '!A1:N1',
+      range: RESERVAS_TAB + '!A1:P1',
       valueInputOption: 'RAW',
-      resource: { values: [['id_reserva', 'id_habitacion', 'habitacion', 'fecha_ingreso', 'fecha_salida', 'nombre', 'telefono', 'email', 'personas', 'estado', 'transferido', 'observacion', 'creado', 'actualizado']] }
+      resource: { values: [['id_reserva', 'id_habitacion', 'habitacion', 'fecha_ingreso', 'fecha_salida', 'hora_ingreso', 'hora_salida', 'nombre', 'telefono', 'email', 'personas', 'estado', 'transferido', 'observacion', 'creado', 'actualizado']] }
     });
   }
 }
@@ -707,6 +707,56 @@ app.get('/api/admin/debug-reservas', async (req, res) => {
     const sheets = await getSheets();
     const r = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: RESERVAS_TAB });
     return res.json({ rows: r.data.values || [] });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/migrate-reservas', async (req, res) => {
+  if (!requireAdmin(req)) return res.status(401).json({ error: 'No autorizado' });
+  try {
+    const sheets = await getSheets();
+    const r = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: RESERVAS_TAB });
+    const rows = r.data.values || [];
+    if (rows.length < 1) return res.json({ ok: true, migrated: 0, total: 0 });
+
+    const header = ['id_reserva', 'id_habitacion', 'habitacion', 'fecha_ingreso', 'fecha_salida', 'hora_ingreso', 'hora_salida', 'nombre', 'telefono', 'email', 'personas', 'estado', 'transferido', 'observacion', 'creado', 'actualizado'];
+    const idx = (name) => header.indexOf(name);
+
+    // Reparaciones puntuales de filas dañadas por el desfase de encabezado
+    const repairs = {
+      '8': { email: '', estado: 'CONFIRMADA', observacion: '', creado: '2026-11-02T16:18:32.840Z', actualizado: '2026-11-02T16:19:19.590Z' },
+      '9': { personas: '1', transferido: 'SI', observacion: '', creado: '2026-11-03T01:48:22.989Z', actualizado: '2026-11-03T01:49:32.193Z' }
+    };
+
+    const fixed = [header];
+    for (const row of rows.slice(1)) {
+      if (!row || row.length === 0) continue;
+      let out;
+      if (row.length === 14) {
+        // formato antiguo sin horas: insertar dos vacíos en posiciones 5 y 6
+        out = [row[0], row[1], row[2], row[3], row[4], '', '', row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13]];
+      } else {
+        out = row.slice(0, 16);
+        while (out.length < 16) out.push('');
+      }
+      const id = String(out[0]).trim();
+      if (repairs[id]) {
+        Object.keys(repairs[id]).forEach((k) => {
+          const i = idx(k);
+          if (i >= 0) out[i] = repairs[id][k];
+        });
+      }
+      fixed.push(out);
+    }
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `${RESERVAS_TAB}!A1:P${fixed.length}`,
+      valueInputOption: 'RAW',
+      resource: { values: fixed }
+    });
+    return res.json({ ok: true, migrated: fixed.length - 1, total: fixed.length - 1 });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
