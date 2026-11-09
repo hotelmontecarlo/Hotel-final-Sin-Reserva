@@ -723,6 +723,11 @@ app.post('/api/admin/migrate-reservas', async (req, res) => {
     const header = ['id_reserva', 'id_habitacion', 'habitacion', 'fecha_ingreso', 'fecha_salida', 'hora_ingreso', 'hora_salida', 'nombre', 'telefono', 'email', 'personas', 'estado', 'transferido', 'observacion', 'creado', 'actualizado'];
     const idx = (name) => header.indexOf(name);
 
+    // Mapa id_habitacion -> nombre actual, para normalizar reservas históricas
+    const habs = await readHabitaciones();
+    const nombrePorId = {};
+    habs.forEach((h) => { nombrePorId[String(h.id).trim()] = h.nombre; });
+
     // Reparaciones puntuales de filas dañadas por el desfase de encabezado
     const repairs = {
       '8': { email: '', estado: 'CONFIRMADA', observacion: '', creado: '2026-11-02T16:18:32.840Z', actualizado: '2026-11-02T16:19:19.590Z' },
@@ -741,6 +746,8 @@ app.post('/api/admin/migrate-reservas', async (req, res) => {
         while (out.length < 16) out.push('');
       }
       const id = String(out[0]).trim();
+      const idHab = String(out[1]).trim();
+      if (nombrePorId[idHab]) out[2] = nombrePorId[idHab];
       if (repairs[id]) {
         Object.keys(repairs[id]).forEach((k) => {
           const i = idx(k);
