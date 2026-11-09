@@ -176,11 +176,12 @@ async function buscarDisponibilidad() {
     const n = habitacionesDisponibles.length;
     const sub = $('resultsSubtitle');
     if (sub) {
+      const plural = n === 1 ? 'habitación' : 'habitaciones';
       sub.textContent = n
-        ? `${n} habitación${n === 1 ? '' : 'es'} disponible${n === 1 ? '' : 's'} del ${formatDate(fi)} al ${formatDate(fs)}.`
+        ? `${n} ${plural} disponible${n === 1 ? '' : 's'} del ${formatDate(fi)} al ${formatDate(fs)}.`
         : `No encontramos habitaciones libres del ${formatDate(fi)} al ${formatDate(fs)}. Pruebe con otras fechas.`;
     }
-    showMsg('msgBuscar', n ? `${n} habitación(es) disponible(s)` : 'Sin disponibilidad para esas fechas', n ? 'success' : 'error');
+    showMsg('msgBuscar', n ? (n === 1 ? '1 habitación disponible' : `${n} habitaciones disponibles`) : 'Sin disponibilidad para esas fechas', n ? 'success' : 'error');
 
     if (n) {
       setTimeout(() => {
