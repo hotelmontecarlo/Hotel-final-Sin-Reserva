@@ -1,0 +1,51 @@
+/* =========================================================
+   Hotel Montecarlo — Premium home (video)
+   Importa el mismo diseño de /premium y agrega soporte video.
+   ========================================================= */
+@import url('/css/home-premium.css');
+
+/* Videos en lugar de imágenes estáticas (mismos márgenes y formato) */
+.hp-hero-media video,
+.hp-room-card video,
+.hp-about-img-main,
+.hp-about-img-small,
+.hp-region-media video,
+.hp-gal video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  background: #e9e4d8;
+}
+
+/* Hero video full height (reemplaza la imagen del hero) */
+.hp-hero-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.hp-hero-video {
+  position: absolute;
+  inset: 0;
+}
+
+/* Galería: video dentro de figura */
+.hp-gal video {
+  position: absolute;
+  inset: 0;
+}
+
+/* Región de Atacama: video */
+.hp-region-media video {
+  position: absolute;
+  inset: 0;
+}
+
+/* Sobre nosotros: videos */
+.hp-about-img-main,
+.hp-about-img-small {
+  position: absolute;
+  inset: 0;
+}
