@@ -214,9 +214,8 @@
 
   document.querySelectorAll('.hp-gal').forEach((fig) => {
     fig.addEventListener('click', () => {
-      const vid = fig.querySelector('video');
       const img = fig.querySelector('img');
-      openLightbox(fig.dataset.full || (vid && vid.poster) || (img && img.src), (vid && vid.getAttribute('poster')) || (img ? img.alt : ''));
+      openLightbox(fig.dataset.full || (img && img.src), img ? img.alt : '');
     });
   });
 
