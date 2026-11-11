@@ -214,6 +214,8 @@
   const spaceDesc = $('hpSpaceDesc');
   const spaceCount = $('hpSpaceCount');
   const spaceThumbs = $('hpSpaceThumbs');
+  const spaceThumbsPrev = $('hpSpaceThumbsPrev');
+  const spaceThumbsNext = $('hpSpaceThumbsNext');
   const spacePrev = $('hpSpacePrev');
   const spaceNext = $('hpSpaceNext');
   let spaceIndex = 0;
@@ -256,12 +258,38 @@
       spaceThumbs.querySelectorAll('.hp-attr-thumb').forEach((btn, i) => {
         btn.classList.toggle('is-active', i === spaceIndex);
       });
+      centerActiveSpaceThumb();
     }
   }
 
   function restartSpaceTimer() {
     if (spaceTimer) clearInterval(spaceTimer);
     spaceTimer = setInterval(() => showSpace(spaceIndex + 1), 6000);
+  }
+
+  /* Miniaturas de Espacios: carrusel horizontal de una sola fila */
+  function updateSpaceThumbsArrows() {
+    if (!spaceThumbs) return;
+    const maxScroll = spaceThumbs.scrollWidth - spaceThumbs.clientWidth;
+    if (spaceThumbsPrev) spaceThumbsPrev.disabled = spaceThumbs.scrollLeft <= 4;
+    if (spaceThumbsNext) spaceThumbsNext.disabled = spaceThumbs.scrollLeft >= maxScroll - 4;
+  }
+
+  function scrollSpaceThumbs(direction) {
+    if (!spaceThumbs) return;
+    const first = spaceThumbs.querySelector('.hp-attr-thumb');
+    const step = (first ? first.getBoundingClientRect().width : 148) + 10;
+    spaceThumbs.scrollBy({ left: direction * step * 2, behavior: 'smooth' });
+  }
+
+  function centerActiveSpaceThumb() {
+    if (!spaceThumbs) return;
+    const active = spaceThumbs.querySelector('.hp-attr-thumb.is-active');
+    if (!active) return;
+    const strip = spaceThumbs.getBoundingClientRect();
+    const thumb = active.getBoundingClientRect();
+    const delta = (thumb.left - strip.left) - (strip.width - thumb.width) / 2;
+    spaceThumbs.scrollTo({ left: Math.max(0, spaceThumbs.scrollLeft + delta), behavior: 'smooth' });
   }
 
   if (spaceImg && spaceThumbs) {
@@ -272,6 +300,14 @@
 
     if (spacePrev) spacePrev.addEventListener('click', () => { showSpace(spaceIndex - 1); restartSpaceTimer(); });
     if (spaceNext) spaceNext.addEventListener('click', () => { showSpace(spaceIndex + 1); restartSpaceTimer(); });
+
+    if (spaceThumbsPrev) spaceThumbsPrev.addEventListener('click', () => scrollSpaceThumbs(-1));
+    if (spaceThumbsNext) spaceThumbsNext.addEventListener('click', () => scrollSpaceThumbs(1));
+    if (spaceThumbs) {
+      spaceThumbs.addEventListener('scroll', updateSpaceThumbsArrows, { passive: true });
+      window.addEventListener('resize', updateSpaceThumbsArrows);
+      updateSpaceThumbsArrows();
+    }
 
     const spaceStage = document.querySelector('.hp-spaces-carousel .hp-attraction-stage');
     if (spaceStage) {
