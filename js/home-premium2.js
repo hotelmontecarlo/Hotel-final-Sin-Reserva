@@ -194,6 +194,92 @@
     }
   }
 
+  /* ---------- Espacios (carrusel igual a Atractivos) ---------- */
+  const SPACES = [
+    { title: 'Áreas comunes y familiares', desc: 'Espacios amplios y acogedores pensados para compartir y disfrutar en familia durante tu estadía.', img: '/images/gallery/g01.jpg' },
+    { title: 'Patio y zonas de descanso', desc: 'Rincones tranquilos para relajarte y disfrutar del ambiente familiar del hotel.', img: '/images/gallery/g02.jpg' },
+    { title: 'Espacios de convivencia', desc: 'Áreas cómodas donde grandes y chicos pueden compartir momentos inolvidables.', img: '/images/gallery/g03.jpg' },
+    { title: 'Ambientes acogedores', desc: 'Cada rincón del hotel está diseñado para que te sientas como en casa.', img: '/images/gallery/g04.jpg' },
+    { title: 'Áreas verdes y recreación', desc: 'Espacios al aire libre ideales para descansar y disfrutar en familia.', img: '/images/gallery/g05.jpg' },
+    { title: 'Comedor y áreas compartidas', desc: 'Lugares pensados para compartir y comenzar el día con comodidad.', img: '/images/gallery/g06.jpg' },
+    { title: 'Espacios para toda la familia', desc: 'Ambientes amplios que invitan a la tranquilidad y el descanso.', img: '/images/gallery/g07.jpg' },
+    { title: 'Detalles que hacen la diferencia', desc: 'Cuidamos cada espacio para ofrecer una estadía cálida y confortable.', img: '/images/gallery/g08.jpg' },
+    { title: 'Rincones del hotel', desc: 'Descubre los distintos ambientes que hacen especial tu visita.', img: '/images/gallery/g09.jpg' },
+    { title: 'Confort en cada espacio', desc: 'Áreas comunes diseñadas para tu bienestar y el de tu familia.', img: '/images/gallery/g10.jpg' },
+    { title: 'Tu hogar en Caldera', desc: 'Espacios pensados para que vivas una experiencia memorable en el norte de Chile.', img: '/images/gallery/g11.jpg' }
+  ];
+
+  const spaceImg = $('hpSpaceImg');
+  const spaceTitle = $('hpSpaceTitle');
+  const spaceDesc = $('hpSpaceDesc');
+  const spaceCount = $('hpSpaceCount');
+  const spaceThumbs = $('hpSpaceThumbs');
+  const spacePrev = $('hpSpacePrev');
+  const spaceNext = $('hpSpaceNext');
+  let spaceIndex = 0;
+  let spaceTimer = null;
+
+  function renderSpaceThumbs() {
+    if (!spaceThumbs) return;
+    spaceThumbs.innerHTML = SPACES.map((s, i) => `
+      <button type="button" class="hp-attr-thumb${i === 0 ? ' is-active' : ''}" data-index="${i}" aria-label="${s.title}">
+        <img src="${s.img}" alt="${s.title}" loading="lazy">
+        <span>${s.title}</span>
+      </button>`).join('');
+    spaceThumbs.querySelectorAll('.hp-attr-thumb').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        showSpace(Number(btn.dataset.index));
+        restartSpaceTimer();
+      });
+    });
+  }
+
+  function showSpace(index) {
+    if (!SPACES.length || !spaceImg) return;
+    spaceIndex = (index + SPACES.length) % SPACES.length;
+    const s = SPACES[spaceIndex];
+
+    spaceImg.style.opacity = '0';
+    const preload = new Image();
+    preload.onload = () => {
+      spaceImg.src = s.img;
+      spaceImg.alt = s.title;
+      spaceImg.style.opacity = '1';
+    };
+    preload.src = s.img;
+
+    if (spaceTitle) spaceTitle.textContent = s.title;
+    if (spaceDesc) spaceDesc.textContent = s.desc;
+    if (spaceCount) spaceCount.textContent = (spaceIndex + 1) + ' / ' + SPACES.length;
+
+    if (spaceThumbs) {
+      spaceThumbs.querySelectorAll('.hp-attr-thumb').forEach((btn, i) => {
+        btn.classList.toggle('is-active', i === spaceIndex);
+      });
+    }
+  }
+
+  function restartSpaceTimer() {
+    if (spaceTimer) clearInterval(spaceTimer);
+    spaceTimer = setInterval(() => showSpace(spaceIndex + 1), 6000);
+  }
+
+  if (spaceImg && spaceThumbs) {
+    SPACES.forEach((s) => { const im = new Image(); im.src = s.img; });
+    renderSpaceThumbs();
+    showSpace(0);
+    restartSpaceTimer();
+
+    if (spacePrev) spacePrev.addEventListener('click', () => { showSpace(spaceIndex - 1); restartSpaceTimer(); });
+    if (spaceNext) spaceNext.addEventListener('click', () => { showSpace(spaceIndex + 1); restartSpaceTimer(); });
+
+    const spaceStage = document.querySelector('.hp-spaces-carousel .hp-attraction-stage');
+    if (spaceStage) {
+      spaceStage.addEventListener('mouseenter', () => { if (spaceTimer) clearInterval(spaceTimer); });
+      spaceStage.addEventListener('mouseleave', restartSpaceTimer);
+    }
+  }
+
   /* ---------- Lightbox galería ---------- */
   const lightbox = $('hpLightbox');
   const lightboxImg = $('hpLightboxImg');
@@ -212,13 +298,6 @@
     document.body.style.overflow = '';
   }
 
-  document.querySelectorAll('.hp-gal').forEach((fig) => {
-    fig.addEventListener('click', () => {
-      const img = fig.querySelector('img');
-      openLightbox(fig.dataset.full || (img && img.src), img ? img.alt : '');
-    });
-  });
-
   if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
   if (lightbox) {
     lightbox.addEventListener('click', (e) => {
@@ -227,9 +306,6 @@
   }
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeLightbox();
-    if (!lightbox || !lightbox.classList.contains('open')) return;
-    if (e.key === 'ArrowRight' && attrNext) { showAttr(attrIndex + 1); restartAttrTimer(); }
-    if (e.key === 'ArrowLeft' && attrPrev) { showAttr(attrIndex - 1); restartAttrTimer(); }
   });
 
   /* ---------- Smooth scroll con offset para nav fijo ---------- */
@@ -245,50 +321,5 @@
       history.replaceState(null, '', id);
     });
   });
-
-  /* ---------- Carrusel de espacios ---------- */
-  const SPACES = [...document.querySelectorAll('.hp-carousel-slide')];
-  const spaceDots = document.getElementById('hpSpaceDots');
-  const spacePrev = document.getElementById('hpSpacePrev');
-  const spaceNext = document.getElementById('hpSpaceNext');
-  let spaceIndex = 0;
-  let spaceTimer = null;
-
-  if (SPACES.length && spaceDots) {
-    SPACES.forEach((_, i) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'hp-carousel-dot' + (i === 0 ? ' is-active' : '');
-      b.setAttribute('aria-label', 'Ir a imagen ' + (i + 1));
-      b.addEventListener('click', () => { showSpace(i); restartSpaceTimer(); });
-      spaceDots.appendChild(b);
-    });
-  }
-
-  function showSpace(index) {
-    if (!SPACES.length) return;
-    spaceIndex = (index + SPACES.length) % SPACES.length;
-    SPACES.forEach((s, i) => s.classList.toggle('is-active', i === spaceIndex));
-    if (spaceDots) {
-      spaceDots.querySelectorAll('.hp-carousel-dot').forEach((b, i) => b.classList.toggle('is-active', i === spaceIndex));
-    }
-  }
-
-  function restartSpaceTimer() {
-    if (spaceTimer) clearInterval(spaceTimer);
-    spaceTimer = setInterval(() => showSpace(spaceIndex + 1), 4000);
-  }
-
-  if (spacePrev) spacePrev.addEventListener('click', () => { showSpace(spaceIndex - 1); restartSpaceTimer(); });
-  if (spaceNext) spaceNext.addEventListener('click', () => { showSpace(spaceIndex + 1); restartSpaceTimer(); });
-  if (SPACES.length) {
-    const stage = document.querySelector('.hp-carousel-stage');
-    if (stage) {
-      stage.addEventListener('mouseenter', () => { if (spaceTimer) clearInterval(spaceTimer); });
-      stage.addEventListener('mouseleave', restartSpaceTimer);
-    }
-    showSpace(0);
-    restartSpaceTimer();
-  }
 
 })();
