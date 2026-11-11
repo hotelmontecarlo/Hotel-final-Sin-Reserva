@@ -139,3 +139,84 @@
   .hp-thumbs-prev { left: 2px; }
   .hp-thumbs-next { right: 2px; }
 }
+
+/* ---------- Sonido del video de portada ---------- */
+.hp-hero-sound {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 1.75rem;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .5rem .95rem .5rem .6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .38);
+  background: rgba(13, 23, 51, .42);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 28px rgba(8, 16, 38, .35);
+  transition: background .25s ease, border-color .25s ease, transform .25s ease;
+}
+.hp-hero-sound:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+.hp-hero-sound:focus-visible {
+  outline: 2px solid var(--gold-400);
+  outline-offset: 3px;
+}
+.hp-hero-sound-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .14);
+}
+.hp-hero-sound-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hp-hero-sound .hp-sound-on { display: block; }
+.hp-hero-sound .hp-sound-off { display: none; }
+.hp-hero-sound.is-muted .hp-sound-on { display: none; }
+.hp-hero-sound.is-muted .hp-sound-off { display: block; }
+.hp-hero-sound.is-muted::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  border: 1px solid rgba(251, 191, 36, .55);
+  animation: hpSoundPulse 2.2s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes hpSoundPulse {
+  0% { transform: scale(.97); opacity: .8; }
+  75% { transform: scale(1.12); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@media (max-width: 720px) {
+  .hp-hero-sound {
+    left: 1.1rem;
+    bottom: 1.2rem;
+    padding: .5rem;
+  }
+  .hp-hero-sound-label { display: none; }
+}

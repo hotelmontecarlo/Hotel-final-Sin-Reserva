@@ -11,6 +11,109 @@
   const year = $('hpYear');
   if (year) year.textContent = new Date().getFullYear();
 
+  /* ---------- Sonido del video de portada ---------- */
+  const heroVideo = document.querySelector('.hp-hero-video');
+  const heroSoundBtn = $('hpHeroSound');
+  const HERO_SOUND_KEY = 'hpHeroSound';
+  let heroSoundPref = null;
+  try { heroSoundPref = localStorage.getItem(HERO_SOUND_KEY); } catch (e) {}
+
+  function setHeroSound(on) {
+    if (!heroVideo) return;
+    heroVideo.muted = !on;
+    if (on) heroVideo.volume = 1;
+    if (heroSoundBtn) {
+      heroSoundBtn.classList.toggle('is-muted', !on);
+      heroSoundBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      heroSoundBtn.setAttribute('aria-label', on ? 'Silenciar el video de portada' : 'Activar el sonido del video de portada');
+    }
+  }
+
+  function saveHeroSound(on) {
+    try { localStorage.setItem(HERO_SOUND_KEY, on ? 'on' : 'off'); } catch (e) {}
+  }
+
+  if (heroVideo) {
+    const playHeroMuted = () => {
+      const p = heroVideo.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    };
+
+    /* Intenta arrancar con sonido; si el navegador lo bloquea, queda en silencio */
+    if (heroSoundPref === 'off') {
+      setHeroSound(false);
+      playHeroMuted();
+    } else {
+      heroVideo.muted = false;
+      const attempt = heroVideo.play();
+      if (attempt && typeof attempt.then === 'function') {
+        attempt.then(() => {
+          setHeroSound(!heroVideo.muted);
+          if (heroVideo.paused) {
+            setHeroSound(false);
+            playHeroMuted();
+          }
+        }).catch(() => {
+          setHeroSound(false);
+          playHeroMuted();
+        });
+      } else {
+        setHeroSound(true);
+      }
+
+      /* Algunos navegadores pausan el video al desilenciarlo sin gesto del usuario */
+      const guardPause = () => {
+        if (heroVideo.paused && !heroVideo.muted) {
+          setHeroSound(false);
+          playHeroMuted();
+        }
+      };
+      heroVideo.addEventListener('pause', guardPause);
+      setTimeout(() => heroVideo.removeEventListener('pause', guardPause), 3000);
+    }
+
+    const removeUnlock = () => {
+      ['pointerdown', 'touchstart', 'keydown'].forEach((ev) => window.removeEventListener(ev, unlockHeroSound));
+    };
+    function unlockHeroSound() {
+      if (heroSoundPref === 'off' || !heroVideo.muted) { removeUnlock(); return; }
+      heroVideo.muted = false;
+      const p = heroVideo.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => { setHeroSound(true); removeUnlock(); }).catch(() => setHeroSound(false));
+      } else {
+        setHeroSound(true);
+        removeUnlock();
+      }
+    }
+
+    /* Primer gesto del usuario: activa el sonido si el navegador lo bloqueó */
+    if (heroSoundPref !== 'off') {
+      ['pointerdown', 'touchstart', 'keydown'].forEach((ev) => {
+        window.addEventListener(ev, unlockHeroSound, { passive: true });
+      });
+    }
+
+    if (heroSoundBtn) {
+      /* El botón maneja su propio gesto para no pisar el desbloqueo automático */
+      ['pointerdown', 'touchstart', 'keydown'].forEach((ev) => {
+        heroSoundBtn.addEventListener(ev, removeUnlock, { passive: true });
+      });
+      heroSoundBtn.addEventListener('click', () => {
+        const turnOn = heroVideo.muted;
+        if (turnOn) {
+          heroVideo.muted = false;
+          heroVideo.volume = 1;
+          const p = heroVideo.play();
+          if (p && typeof p.catch === 'function') p.catch(() => {});
+        }
+        setHeroSound(turnOn);
+        saveHeroSound(turnOn);
+        removeUnlock();
+      });
+    }
+  }
+
   /* ---------- Nav: sombra al hacer scroll ---------- */
   const nav = $('hpNav');
   const onScroll = () => {
