@@ -168,7 +168,9 @@
 
     if (attrThumbs) {
       attrThumbs.querySelectorAll('.hp-attr-thumb').forEach((btn, i) => {
-        btn.classList.toggle('is-active', i === attrIndex);
+        const active = i === attrIndex;
+        btn.classList.toggle('is-active', active);
+        if (active) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       });
     }
   }
